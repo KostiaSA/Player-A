@@ -1,6 +1,9 @@
 .idea
 node_modules
 api
+www/kit
+platforms
+plugins
 *.js
 *.map
 *.rar

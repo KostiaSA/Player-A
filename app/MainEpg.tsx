@@ -33,6 +33,24 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
             width: "auto",
         }
 
+        let yearColor="rgb(204, 204, 204)";
+
+        let genreSpan: any = null;
+        if (this.props.data.genreTitle)
+            genreSpan=<span style={{fontSize: 13, color: "#a2a2a2"}}>{this.props.data.genreTitle}</span>;
+
+        let yearSpan: any = null;
+        if (this.props.data.year && this.props.data.year>0)
+            yearSpan=<span style={{fontSize: 13, color: yearColor}}>{", "+this.props.data.year + " г."}</span>;
+
+        let directorSpan: any = null;
+        if (this.props.data.director && this.props.data.director!=="")
+            directorSpan=<span style={{fontSize: 13, color: "#a2a2a2"}}>{", реж.: "+this.props.data.director}</span>;
+
+        let actorsSpan: any = null;
+        if (this.props.data.actors && this.props.data.actors!=="")
+            actorsSpan=<span style={{fontSize: 13, color: "#a2a2a2"}}>{", в ролях: "+this.props.data.actors}</span>;
+
         return (
             <table style={{whiteSpace: "normal", lineHeight: "92%", height: 25, overflow: "hidden"}}>
                 <tr>
@@ -45,7 +63,11 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                         <div style={{padding: 2, height: 25}}>
                             <span style={{marginRight: 5, color: "#FFC107"}}>{this.props.data.channelTitle}</span>
                             <span style={{color: "white", marginRight: 5}}>{this.props.data.title}</span>
-                            <span style={{fontSize: 13, color: "#a2a2a2"}}>{this.props.data.desc}</span>
+                            {genreSpan}
+                            {yearSpan}
+                            {directorSpan}
+                            {actorsSpan}
+                            <span style={{fontSize: 13, color: "#a2a2a2"}}>{", "+this.props.data.desc}</span>
                         </div>
                     </td>
                 </tr>
