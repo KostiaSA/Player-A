@@ -6,7 +6,7 @@ import SyntheticEvent = React.SyntheticEvent;
 import CSSProperties = React.CSSProperties;
 import moment = require("moment");
 import {appState} from "./AppState";
-
+import {KeyboardEvent} from "react";
 
 //import  NotifyResize = require("react-notify-resize");
 
@@ -34,18 +34,30 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
             position: "absolute",
             left: 0,
             top: 0,
-            right:0,
-            bottom:0,
+            right: 0,
+            bottom: 0,
             backgroundSize: "cover",
             objectFit: "contain"
         };
 
         return (
             <video
+                className="main-video"
+                tabIndex={0}
                 onClick={() => {
                     appState.mainEpgVisible = true;
                     appState.infoBoxVisible = true;
                 }}
+                onKeyDown={(e: KeyboardEvent<any>) => {
+                   // console.log("keyDown=", e.keyCode, e.key);
+                    if (e.key==="ArrowUp" ||e.key==="ArrowDown"){
+                        appState.mainEpgVisible = true;
+                        appState.infoBoxVisible = true;
+                        appState.mainEpg.loadEpg();
+                    }
+                    //this.text += "  " + e.keyCode + " " + e.key;
+                }}
+
                 ref={(e) => {
                     appState.nativePlayer = e;
                     console.log("controller", (appState.nativePlayer as any));

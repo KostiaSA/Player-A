@@ -110,7 +110,9 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
         await appState.doLogin();
 
         let req: ILoadCurrentEpgReq = {
-            cmd: LOAD_CURRENT_EPG
+            cmd: LOAD_CURRENT_EPG,
+            login:appState.login,
+            password:appState.password,
         };
 
         httpRequest<ILoadCurrentEpgReq, ILoadCurrentEpgAns>(req)
@@ -239,12 +241,8 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                         onGridReady={this.gridReadyHandler}
                         onCellFocused={(e: any) => {
 
-                            console.log("1");
                             let focusedRowIndex = this.comboGridApi.getFocusedCell().rowIndex;
-                            console.log("2");
                             let renderedRows = this.comboGridApi.getRenderedNodes();
-                            console.log("3");
-
 
                             this.focusedEpg = undefined;
 
@@ -259,13 +257,11 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                                 appState.infoBox.loadInfo(this.focusedEpg.channelId, this.focusedEpg.time);
                                 $("#mainepggrid").find(".ag-cell").off("keydown.buhta");
                                 $("#mainepggrid").find(".ag-cell").on("keydown.buhta", (event) => {
-
                                     if (event.keyCode === 13) {
-
-                                        // let focusedRowIndex = this.comboGridApi.getFocusedCell().rowIndex;
-                                        // let renderedRows = this.comboGridApi.getRenderedNodes();
-                                        alert("Ok")
-
+                                        appState.mainEpgVisible=false;
+                                        appState.infoBoxVisible=false;
+                                        appState.nativePlayer.src = this.focusedEpg!.channelUrl;
+                                        appState.nativePlayer.play();
                                     }
                                 });
                             }

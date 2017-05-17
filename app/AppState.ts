@@ -10,8 +10,8 @@ import {InfoBox} from "./InfoBox";
 export class AppState {
     loginOk: boolean;
     @observable sessionId: string;
-    @observable login: string;
-    @observable password: string;
+    @observable login: string="212850";
+    @observable password: string="31025";
     encryptKey: string;
 
 

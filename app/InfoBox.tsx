@@ -16,6 +16,7 @@ import {AgGridReact} from "ag-grid-react";
 import {AgGridColDef} from "./AgGridColDef";
 import ColumnApi = ag.grid.ColumnApi;
 import GridApi = ag.grid.GridApi;
+import {config} from "./config/config";
 
 
 //import  NotifyResize = require("react-notify-resize");
@@ -102,7 +103,7 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
             return (
                 <div style={style}>
                     <img style={imgStyle}
-                         src={"http://192.168.0.14:3001/kit/providers/new.s-tv.ru/images/" + this.info.image}/>
+                         src={config.apiUrl.replace("api", "") + "kit/providers/new.s-tv.ru/images/" + this.info.image}/>
                 </div>
             );
         }
