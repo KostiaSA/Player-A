@@ -43,7 +43,8 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
         return (
             <video
                 onClick={() => {
-                    appState.mainEpgVisible = true
+                    appState.mainEpgVisible = true;
+                    appState.infoBoxVisible = true;
                 }}
                 ref={(e) => {
                     appState.nativePlayer = e;

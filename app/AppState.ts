@@ -4,6 +4,7 @@ import moment = require("moment");
 import {MainEpg} from "./MainEpg";
 import {httpRequest} from "./utils/httpRequest";
 import {GET_ENCRYPT_KEY_CMD, IGetEncryptKeyAns, IGetEncryptKeyReq, ILoginAns, ILoginReq, LOGIN_CMD} from "./api/api";
+import {InfoBox} from "./InfoBox";
 
 
 export class AppState {
@@ -15,12 +16,14 @@ export class AppState {
 
 
     mainEpg: MainEpg;
+    infoBox: InfoBox;
 
     //@observable winHeight: number;
     //@observable winWidth: number;
     screenSize: { height: number, width: number };
 
     @observable mainEpgVisible: boolean = false;
+    @observable infoBoxVisible: boolean = false;
 
     nativePlayer: HTMLVideoElement;
 

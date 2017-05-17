@@ -13,6 +13,7 @@ import {AgGridReact} from "ag-grid-react";
 import {AgGridColDef} from "./AgGridColDef";
 import ColumnApi = ag.grid.ColumnApi;
 import GridApi = ag.grid.GridApi;
+import {config} from "./config/config";
 
 
 //import  NotifyResize = require("react-notify-resize");
@@ -33,30 +34,32 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
             width: "auto",
         }
 
-        let yearColor="rgb(204, 204, 204)";
+        let yearColor = "rgb(204, 204, 204)";
 
         let genreSpan: any = null;
         if (this.props.data.genreTitle)
-            genreSpan=<span style={{fontSize: 13, color: "#a2a2a2"}}>{this.props.data.genreTitle}</span>;
+            genreSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{this.props.data.genreTitle}</span>;
 
         let yearSpan: any = null;
-        if (this.props.data.year && this.props.data.year>0)
-            yearSpan=<span style={{fontSize: 13, color: yearColor}}>{", "+this.props.data.year + " г."}</span>;
+        if (this.props.data.year && this.props.data.year > 0)
+            yearSpan = <span style={{fontSize: 13, color: yearColor}}>{", " + this.props.data.year + " г."}</span>;
 
         let directorSpan: any = null;
-        if (this.props.data.director && this.props.data.director!=="")
-            directorSpan=<span style={{fontSize: 13, color: "#a2a2a2"}}>{", реж.: "+this.props.data.director}</span>;
+        if (this.props.data.director && this.props.data.director !== "")
+            directorSpan =
+                <span style={{fontSize: 13, color: "#a2a2a2"}}>{", реж.: " + this.props.data.director}</span>;
 
         let actorsSpan: any = null;
-        if (this.props.data.actors && this.props.data.actors!=="")
-            actorsSpan=<span style={{fontSize: 13, color: "#a2a2a2"}}>{", в ролях: "+this.props.data.actors}</span>;
+        if (this.props.data.actors && this.props.data.actors !== "")
+            actorsSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{", в ролях: " + this.props.data.actors}</span>;
 
         return (
             <table style={{whiteSpace: "normal", lineHeight: "92%", height: 25, overflow: "hidden"}}>
                 <tr>
                     <td>
                         <div style={{height: 25, width: 50, textAlign: "right"}}>
-                            <img style={imgStyle} src={"kit/providers/" + this.props.data.channelImage}/>
+                            <img style={imgStyle}
+                                 src={config.apiUrl.replace("api", "") + "kit/providers/" + this.props.data.channelImage}/>
                         </div>
                     </td>
                     <td>
@@ -67,7 +70,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                             {yearSpan}
                             {directorSpan}
                             {actorsSpan}
-                            <span style={{fontSize: 13, color: "#a2a2a2"}}>{", "+this.props.data.desc}</span>
+                            <span style={{fontSize: 13, color: "#a2a2a2"}}>{", " + this.props.data.desc}</span>
                         </div>
                     </td>
                 </tr>
@@ -133,6 +136,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
     };
 
+    focusedEpg?: IEpg;
 
     @observable text: string = "";
     // http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/508/index.m3u8
@@ -143,7 +147,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
             position: "absolute",
             left: 20,
             top: 20,
-            right: 20,
+            width: 540,
             bottom: 20,
             border: "0px solid yellow",
             color: "yellow",
@@ -219,7 +223,8 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                 </button>
                 <button onClick={() => {
                     console.log("пауза");
-                    appState.mainEpgVisible = false
+                    appState.mainEpgVisible = false;
+                    appState.infoBoxVisible = false;
                 }}>Close
                 </button>
                 <button onClick={() => {
@@ -228,10 +233,47 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                 </button>
                 <br/>
                 {screen.width}x{screen.height}
-                <div style={{height: 450, width: 550}} className="ag-dark">
+                <div id="mainepggrid" style={{height: 450, width: 550}} className="ag-dark">
                     <AgGridReact
                         gridOptions={agOpt}
                         onGridReady={this.gridReadyHandler}
+                        onCellFocused={(e: any) => {
+
+                            console.log("1");
+                            let focusedRowIndex = this.comboGridApi.getFocusedCell().rowIndex;
+                            console.log("2");
+                            let renderedRows = this.comboGridApi.getRenderedNodes();
+                            console.log("3");
+
+
+                            this.focusedEpg = undefined;
+
+                            for (let row of renderedRows) {
+                                if (row.rowIndex === focusedRowIndex) {
+                                    this.focusedEpg = row.data;
+                                    break;
+                                }
+                            }
+
+                            if (this.focusedEpg) {
+                                appState.infoBox.loadInfo(this.focusedEpg.channelId, this.focusedEpg.time);
+                                $("#mainepggrid").find(".ag-cell").off("keydown.buhta");
+                                $("#mainepggrid").find(".ag-cell").on("keydown.buhta", (event) => {
+
+                                    if (event.keyCode === 13) {
+
+                                        // let focusedRowIndex = this.comboGridApi.getFocusedCell().rowIndex;
+                                        // let renderedRows = this.comboGridApi.getRenderedNodes();
+                                        alert("Ok")
+
+                                    }
+                                });
+                            }
+                            else
+                                alert("focusedEpg?");
+
+                        }}
+
                     >
                     </AgGridReact>
                 </div>

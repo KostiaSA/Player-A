@@ -5,6 +5,7 @@ import {appState} from "./AppState";
 import {observer} from "mobx-react";
 import {MainVideo} from "./MainVideo";
 import {MainEpg} from "./MainEpg";
+import {InfoBox} from "./InfoBox";
 
 
 export interface IAppPage {
@@ -51,7 +52,8 @@ export class App extends React.Component<any, any> {
     componentDidMount() {
         setTimeout(() => {
             appState.mainEpgVisible = true;
-        }, 3000);
+            appState.infoBoxVisible = true;
+        }, 2000);
 
         setTimeout(() => {
             appState.nativePlayer.play();
@@ -72,6 +74,7 @@ export class App extends React.Component<any, any> {
                 <div style={{position: "relative", width:960, height: 540, border:"0px dotted white", overdlow:"hidden"}}>
                     <MainVideo/>
                     <MainEpg/>
+                    <InfoBox/>
                 </div>
             );
         }
@@ -80,6 +83,7 @@ export class App extends React.Component<any, any> {
                 <div style={{position: "relative", height: "100%"}}>
                     <MainVideo/>
                     <MainEpg/>
+                    <InfoBox/>
                 </div>
             );
         }
