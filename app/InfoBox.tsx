@@ -39,25 +39,34 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
 
     info: IInfo;
 
-    async loadInfo(channelId: number, time: string,) {
+    private loadInfoTimeoutHandler?: number;
 
+    async loadInfo(channelId: number, time: string,) {
         await appState.doLogin();
 
-        let req: ILoadInfoReq = {
-            cmd: LOAD_INFO,
-            channelId: channelId,
-            time: time,
-        };
+        if (this.loadInfoTimeoutHandler)
+            clearTimeout(this.loadInfoTimeoutHandler);
 
-        httpRequest<ILoadInfoReq, ILoadInfoAns>(req)
-            .then((ans: any) => {
-                this.info = ans.info;
-                console.log("this.info", this.info);
-                this.forceUpdate();
-            })
-            .catch((err: any) => {
-                alert(err);
-            });
+        this.loadInfoTimeoutHandler = setTimeout(() => {
+
+            let req: ILoadInfoReq = {
+                cmd: LOAD_INFO,
+                channelId: channelId,
+                time: time,
+            };
+
+            httpRequest<ILoadInfoReq, ILoadInfoAns>(req)
+                .then((ans: any) => {
+                    this.info = ans.info;
+                    console.log("this.info", this.info);
+                    this.forceUpdate();
+                })
+                .catch((err: any) => {
+                    alert(err);
+                });
+
+        }, 200);
+
     }
 
     comboGridApi: GridApi;
@@ -81,6 +90,7 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
             border: "0px solid yellow",
             color: "yellow",
             backgroundColor: "rgba(0, 0, 0, 0.75)",
+            paddingLeft: 10
         };
 
         if (appState.infoBoxVisible)
@@ -90,17 +100,54 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
 
         let imgStyle: CSSProperties = {
             display: "inline-block",
-            maxHeight: 300,
-            maxWidth: 200,
+            maxHeight: appState.getMenuHeight() / 3,
+            maxWidth: appState.getInfoBoxWidth() - 10,
             height: "auto",
             width: "auto",
         }
 
+
         if (this.info) {
+            let yearColor = "rgb(204, 204, 204)";
+
+            let genreSpan: any = null;
+            if (this.info.genreTitle)
+                genreSpan = <span style={{fontSize: 14, color: yearColor}}>{this.info.genreTitle}</span>;
+
+            let yearSpan: any = null;
+            if (this.info.year && this.info.year !== "0")
+                yearSpan = <span style={{fontSize: 14, color: yearColor}}>{", " + this.info.year + " г."}</span>;
+
+            let directorSpan: any = null;
+            if (this.info.director && this.info.director !== "")
+                directorSpan =
+                    <span style={{fontSize: 14, color: yearColor}}>{", реж.: " + this.info.director}</span>;
+
+            let actorsSpan: any = null;
+            if (this.info.actors && this.info.actors !== "")
+                actorsSpan =
+                    <div style={{marginTop: 5, fontSize: 14, color: "#a2a2a2"}}>{"в ролях: " + this.info.actors}</div>;
+
             return (
                 <div style={style}>
-                    <img style={imgStyle}
-                         src={config.apiUrl.replace("api", "") + "kit/providers/new.s-tv.ru/images/" + this.info.image}/>
+                    <div style={{textAlign: "left", paddingTop: 5}}>
+                        <img style={imgStyle}
+                             src={config.apiUrl.replace("api", "") + "kit/providers/new.s-tv.ru/images/" + this.info.image}/>
+                    </div>
+                    <div style={{padding: 2, overflow: "hidden"}}>
+                        <div style={{
+                            fontSize: 16,
+                            color: "white",
+                            marginTop: 5,
+                            marginBottom: 5
+                        }}>{this.info.title}</div>
+                        {genreSpan}
+                        {yearSpan}
+                        {directorSpan}
+                        {actorsSpan}
+                        <div style={{marginTop: 5, fontSize: 14, color: "#a2a2a2"}}>{this.info.desc}</div>
+                    </div>
+
                 </div>
             );
         }

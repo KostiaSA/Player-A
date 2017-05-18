@@ -11,7 +11,7 @@ console.log("platform", platform);
 
 function startTimer(){
     setInterval(()=>{
-        $(".timer-str").text(moment().format("hh:mm"));
+        $(".timer-str").text(moment().format("HH:mm"));
     },1000);
 }
 

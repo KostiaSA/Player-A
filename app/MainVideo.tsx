@@ -48,6 +48,7 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                     onClick={() => {
                         appState.mainEpgVisible = true;
                         appState.infoBoxVisible = true;
+                        appState.mainEpg.loadEpg();
                     }}
                     onKeyDown={(e: KeyboardEvent<any>) => {
                         // console.log("keyDown=", e.keyCode, e.key);
@@ -75,6 +76,7 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                     onClick={() => {
                         appState.mainEpgVisible = true;
                         appState.infoBoxVisible = true;
+                        appState.mainEpg.loadEpg();
                     }}
                     onKeyDown={(e: KeyboardEvent<any>) => {
                         // console.log("keyDown=", e.keyCode, e.key);

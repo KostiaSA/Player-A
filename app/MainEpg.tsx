@@ -106,9 +106,10 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
     epg: IEpg[];
 
-    async loadEpg() {
 
+    async loadEpg() {
         await appState.doLogin();
+
 
         let req: ILoadCurrentEpgReq = {
             cmd: LOAD_CURRENT_EPG,
@@ -118,16 +119,60 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
         httpRequest<ILoadCurrentEpgReq, ILoadCurrentEpgAns>(req)
             .then((ans: any) => {
-                this.epg = ans.epg;
-                this.comboGridApi.setRowData(this.epg);
-                this.comboGridApi.setFocusedCell(0, "col0");
+                if (!this.epg) {
+                    this.epg = ans.epg;
+                    this.comboGridApi.setRowData(this.epg);
+                }
+                else {
+                    this.epg.length = 0;
+                    for (let item of ans.epg) {
+                        this.epg.push(item);
+                    }
+                    this.comboGridApi.refreshView();
+                }
 
+                if (this.focusedChannelId === -1) {
+                    this.comboGridApi.ensureIndexVisible(0);
+                    this.comboGridApi.setFocusedCell(0, "col0");
+                    console.log("setFocusedCell(0)");
+                }
+                else {
+                    let index = 0;
+                    for (let item of this.epg) {
+                        if (item.channelId === this.focusedChannelId) {
 
-                console.log("loadEpg", this.epg);
+                            if (!this.isChannelVisible(this.focusedChannelId)) {
+                                this.comboGridApi.ensureIndexVisible(this.epg.length-1);
+                                this.comboGridApi.ensureIndexVisible(index);
+                                this.comboGridApi.setFocusedCell(index, "col0");
+                            }
+                            else
+                                this.comboGridApi.setFocusedCell(index, "col0");
+
+                            break;
+                        }
+                        else
+                            index++;
+                    }
+                }
             })
             .catch((err: any) => {
                 alert(err);
             });
+
+
+    }
+
+    private isChannelVisible(channelId: number): boolean {
+        var nodes = this.comboGridApi.getRenderedNodes();
+        for (let node of nodes) {
+            if (node.data.channelId === channelId) {
+                console.log("ch visible");
+                return true;
+            }
+        }
+        console.log("ch NOT visible");
+        return false;
     }
 
     comboGridApi: GridApi;
@@ -139,6 +184,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
     };
 
+    focusedChannelId: number = -1;
     focusedEpg?: IEpg;
 
     //@observable text: string = "";
@@ -165,7 +211,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
             colId: "col0",
             headerName: "-",
             field: "title",
-            width: appState.getMainEpgWidth()-17,
+            width: appState.getMainEpgWidth() - 17,
             cellRendererFramework: AgGrid_CellRenderer,
         };
         cols.push(fromCol);
@@ -196,7 +242,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                 }}
                 style={style}>
                 <div style={{height: headerHeight}}>
-                    <span className="timer-str" style={{fontSize:16,color:"yellow",padding:3}}></span>
+                    <span className="timer-str" style={{fontSize: 16, color: "yellow", padding: 3}}></span>
                     <button onClick={() => {
                         console.log("пауза");
                         appState.nativePlayer.pause()
@@ -245,7 +291,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                             let focusedRowIndex = this.comboGridApi.getFocusedCell().rowIndex;
                             let renderedRows = this.comboGridApi.getRenderedNodes();
 
-                            this.focusedEpg = undefined;
+                            this.focusedEpg = undefined;//renderedRows[0].data;
 
                             for (let row of renderedRows) {
                                 if (row.rowIndex === focusedRowIndex) {
@@ -255,6 +301,8 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                             }
 
                             if (this.focusedEpg) {
+                                this.focusedChannelId = this.focusedEpg.channelId;
+
                                 appState.infoBox.loadInfo(this.focusedEpg.channelId, this.focusedEpg.time);
                                 $("#mainepggrid").find(".ag-cell").off("keydown.buhta");
                                 $("#mainepggrid").find(".ag-cell").on("keydown.buhta", (event) => {
