@@ -50,21 +50,13 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                         appState.infoBoxVisible = true;
                         appState.mainEpg.loadEpg();
                     }}
-                    onKeyDown={(e: KeyboardEvent<any>) => {
-                        // console.log("keyDown=", e.keyCode, e.key);
-                        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                            appState.mainEpgVisible = true;
-                            appState.infoBoxVisible = true;
-                            appState.mainEpg.loadEpg();
-                        }
-                        //this.text += "  " + e.keyCode + " " + e.key;
-                    }}
 
                     ref={(e) => {
                         //appState.nativePlayer = e;
                         console.log("controller", (appState.nativePlayer as any));
                     }}
                     style={{...style,backgroundColor:"silver"}} width={screen.width} height={screen.height}>
+                    x
                 </div>
             );
         }
@@ -77,15 +69,6 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                         appState.mainEpgVisible = true;
                         appState.infoBoxVisible = true;
                         appState.mainEpg.loadEpg();
-                    }}
-                    onKeyDown={(e: KeyboardEvent<any>) => {
-                        // console.log("keyDown=", e.keyCode, e.key);
-                        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                            appState.mainEpgVisible = true;
-                            appState.infoBoxVisible = true;
-                            appState.mainEpg.loadEpg();
-                        }
-                        //this.text += "  " + e.keyCode + " " + e.key;
                     }}
 
                     ref={(e) => {

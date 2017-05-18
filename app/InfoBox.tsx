@@ -90,7 +90,8 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
             border: "0px solid yellow",
             color: "yellow",
             backgroundColor: "rgba(0, 0, 0, 0.75)",
-            paddingLeft: 10
+            paddingLeft: 10,
+            overflow:"hidden"
         };
 
         if (appState.infoBoxVisible)
@@ -145,7 +146,7 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
                         {yearSpan}
                         {directorSpan}
                         {actorsSpan}
-                        <div style={{marginTop: 5, fontSize: 14, color: "#a2a2a2"}}>{this.info.desc}</div>
+                        <div style={{marginTop: 7, fontSize: 13, color: "#a2a2a2"}}>{this.info.desc}</div>
                     </div>
 
                 </div>

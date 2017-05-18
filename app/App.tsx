@@ -50,10 +50,10 @@ export class App extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        setTimeout(() => {
-            appState.mainEpgVisible = true;
-            appState.infoBoxVisible = true;
-        }, 2000);
+        // setTimeout(() => {
+        //     appState.mainEpgVisible = true;
+        //     appState.infoBoxVisible = true;
+        // }, 2000);
 
         setTimeout(() => {
             appState.nativePlayer.play();
@@ -64,6 +64,16 @@ export class App extends React.Component<any, any> {
             //appState.winHeight = $(window).height();
             this.forceUpdate();
         });
+
+        document.addEventListener("keydown", (e: any) => {
+            //console.log("global keydown", e.keyCode);
+            if (!appState.mainEpgVisible && (e.keyCode===38 || e.keyCode===40 )) {
+                appState.mainEpgVisible = true;
+                appState.infoBoxVisible = true;
+                appState.mainEpg.loadEpg();
+            }
+
+        }, false);
     };
 
 
@@ -71,7 +81,13 @@ export class App extends React.Component<any, any> {
 
         if (!(window as any).cordova) {
             return (
-                <div style={{position: "relative", width:960, height: 540, border:"0px dotted white", overdlow:"hidden"}}>
+                <div style={{
+                    position: "relative",
+                    width: 960,
+                    height: 540,
+                    border: "0px dotted white",
+                    overdlow: "hidden"
+                }}>
                     <MainVideo/>
                     <MainEpg/>
                     <InfoBox/>
