@@ -10,8 +10,8 @@ import {InfoBox} from "./InfoBox";
 export class AppState {
     loginOk: boolean;
     @observable sessionId: string;
-    @observable login: string="212850";
-    @observable password: string="31025";
+    @observable login: string = "212850";
+    @observable password: string = "31025";
     encryptKey: string;
 
 
@@ -64,6 +64,49 @@ export class AppState {
                 });
         }
 
+    }
+
+
+    getMenuPadding(): number {
+        return 20;
+    }
+
+    getInfoBoxWidthPercent(): number {
+        return 37;
+    }
+
+    getMenuHeight(): number {
+        return screen.height-(2*this.getMenuPadding());
+    }
+
+    getMenuWidth(): number {
+        return screen.width-(2*this.getMenuPadding());
+    }
+
+    getInfoBoxWidth(): number {
+        return Math.round(this.getMenuWidth() * this.getInfoBoxWidthPercent() / 100);
+    }
+
+    getMainEpgWidth(): number {
+        return this.getMenuWidth()-this.getInfoBoxWidth();
+    }
+
+    getMainEpgPos(): any {
+        return {
+            left: this.getMenuPadding(),
+            top: this.getMenuPadding(),
+            width: this.getMainEpgWidth(),
+            bottom: this.getMenuPadding(),
+        }
+    }
+
+    getInfoBoxPos(): any {
+        return {
+            left: this.getMainEpgPos().left+this.getMainEpgPos().width,
+            top: this.getMenuPadding(),
+            width: this.getInfoBoxWidth(),
+            bottom: this.getMenuPadding(),
+        }
     }
 }
 

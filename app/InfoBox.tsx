@@ -77,11 +77,8 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
 
         let style: CSSProperties = {
             position: "absolute",
-            left: 580,
-            top: 20,
-            right: 20,
-            bottom: 20,
-            border: "1px solid yellow",
+            ...appState.getInfoBoxPos(),
+            border: "0px solid yellow",
             color: "yellow",
             backgroundColor: "rgba(0, 0, 0, 0.75)",
         };

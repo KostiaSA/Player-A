@@ -54,7 +54,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
             actorsSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{", в ролях: " + this.props.data.actors}</span>;
 
         return (
-            <table style={{whiteSpace: "normal", lineHeight: "92%", height: 25, overflow: "hidden"}}>
+            <table style={{whiteSpace: "normal", lineHeight: "93%", height: 25, overflow: "hidden"}}>
                 <tr>
                     <td>
                         <div style={{height: 25, width: 50, textAlign: "right"}}>
@@ -100,7 +100,8 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
     };
 
     backButtonPressed() {
-        this.text += "  esc";
+        appState.mainEpgVisible = false;
+        appState.infoBoxVisible = false;
     }
 
     epg: IEpg[];
@@ -111,8 +112,8 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
         let req: ILoadCurrentEpgReq = {
             cmd: LOAD_CURRENT_EPG,
-            login:appState.login,
-            password:appState.password,
+            login: appState.login,
+            password: appState.password,
         };
 
         httpRequest<ILoadCurrentEpgReq, ILoadCurrentEpgAns>(req)
@@ -140,17 +141,14 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
     focusedEpg?: IEpg;
 
-    @observable text: string = "";
+    //@observable text: string = "";
     // http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/508/index.m3u8
 
     render(): any {
-
+        console.log("render mainEpg");
         let style: CSSProperties = {
+            ...appState.getMainEpgPos(),
             position: "absolute",
-            left: 20,
-            top: 20,
-            width: 540,
-            bottom: 20,
             border: "0px solid yellow",
             color: "yellow",
             backgroundColor: "rgba(0, 0, 0, 0.75)",
@@ -167,8 +165,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
             colId: "col0",
             headerName: "-",
             field: "title",
-            width: 535,
-            //cellStyle: {whiteSpace: "normal"},
+            width: appState.getMainEpgWidth()-17,
             cellRendererFramework: AgGrid_CellRenderer,
         };
         cols.push(fromCol);
@@ -185,57 +182,61 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
             // }
         };
 
+        let headerHeight = 25;
 
         return (
             <div
                 onKeyPress={(e: KeyboardEvent<any>) => {
                     console.log("keyCode=", e.keyCode);
-                    this.text += "  " + e.keyCode + " " + e.key;
+                    //this.text += "  " + e.keyCode + " " + e.key;
                 }}
                 onKeyDown={(e: KeyboardEvent<any>) => {
                     console.log("keyDown=", e.keyCode);
-                    this.text += "  " + e.keyCode + " " + e.key;
+                    //this.text += "  " + e.keyCode + " " + e.key;
                 }}
                 style={style}>
-                <span> привет уроды</span>
-                <button onClick={() => {
-                    console.log("пауза");
-                    appState.nativePlayer.pause()
-                }}>Пауза
-                </button>
-                <button onClick={() => {
-                    console.log("пауза");
-                    appState.nativePlayer.play()
-                }}>Play
-                </button>
-                <button onClick={() => {
-                    appState.nativePlayer.src = "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/106/index.m3u8?utc=1494406801&lutc=1494590932";
-                    appState.nativePlayer.play()
-                }}>РБК
-                </button>
-                <button onClick={() => {
-                    appState.nativePlayer.src = "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/127/index.m3u8";
-                    appState.nativePlayer.play()
-                }}>Первый
-                </button>
-                <button onClick={() => {
-                    appState.nativePlayer.src = "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/508/index.m3u8";
-                    appState.nativePlayer.play()
-                }}>ТВ3
-                </button>
-                <button onClick={() => {
-                    console.log("пауза");
-                    appState.mainEpgVisible = false;
-                    appState.infoBoxVisible = false;
-                }}>Close
-                </button>
-                <button onClick={() => {
-                    this.loadEpg();
-                }}>Load teleguid
-                </button>
-                <br/>
-                {screen.width}x{screen.height}
-                <div id="mainepggrid" style={{height: 450, width: 550}} className="ag-dark">
+                <div style={{height: headerHeight}}>
+                    <span className="timer-str" style={{fontSize:16,color:"yellow",padding:3}}></span>
+                    <button onClick={() => {
+                        console.log("пауза");
+                        appState.nativePlayer.pause()
+                    }}>Пауза
+                    </button>
+                    <button onClick={() => {
+                        console.log("пауза");
+                        appState.nativePlayer.play()
+                    }}>Play
+                    </button>
+                    <button onClick={() => {
+                        appState.nativePlayer.src = "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/106/index.m3u8?utc=1494406801&lutc=1494590932";
+                        appState.nativePlayer.play()
+                    }}>РБК
+                    </button>
+                    <button onClick={() => {
+                        appState.nativePlayer.src = "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/127/index.m3u8";
+                        appState.nativePlayer.play()
+                    }}>Первый
+                    </button>
+                    <button onClick={() => {
+                        appState.nativePlayer.src = "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/508/index.m3u8";
+                        appState.nativePlayer.play()
+                    }}>ТВ3
+                    </button>
+                    <button onClick={() => {
+                        console.log("пауза");
+                        appState.mainEpgVisible = false;
+                        appState.infoBoxVisible = false;
+                    }}>Close
+                    </button>
+                    <button onClick={() => {
+                        this.loadEpg();
+                    }}>Load teleguid
+                    </button>
+                    {screen.width}x{screen.height}
+                </div>
+                <div id="mainepggrid"
+                     style={{height: appState.getMenuHeight() - headerHeight, width: appState.getMainEpgWidth()}}
+                     className="ag-dark">
                     <AgGridReact
                         gridOptions={agOpt}
                         onGridReady={this.gridReadyHandler}
@@ -258,8 +259,8 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                                 $("#mainepggrid").find(".ag-cell").off("keydown.buhta");
                                 $("#mainepggrid").find(".ag-cell").on("keydown.buhta", (event) => {
                                     if (event.keyCode === 13) {
-                                        appState.mainEpgVisible=false;
-                                        appState.infoBoxVisible=false;
+                                        appState.mainEpgVisible = false;
+                                        appState.infoBoxVisible = false;
                                         appState.nativePlayer.src = this.focusedEpg!.channelUrl;
                                         appState.nativePlayer.play();
                                     }

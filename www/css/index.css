@@ -115,3 +115,7 @@ body {
 .ag-dark .ag-header {
     border-bottom: 0px solid #808080;
 }
+
+.ag-dark .ag-ltr .ag-cell-no-focus {
+    border-right: 0px dotted #808080;
+}

@@ -14,4 +14,4 @@ let cloudDir: IConfig = {
 }
 
 
-export let config: IConfig = cloudDir;
+export let config: IConfig = developDir;

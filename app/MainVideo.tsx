@@ -40,34 +40,63 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
             objectFit: "contain"
         };
 
-        return (
-            <video
-                className="main-video"
-                tabIndex={0}
-                onClick={() => {
-                    appState.mainEpgVisible = true;
-                    appState.infoBoxVisible = true;
-                }}
-                onKeyDown={(e: KeyboardEvent<any>) => {
-                   // console.log("keyDown=", e.keyCode, e.key);
-                    if (e.key==="ArrowUp" ||e.key==="ArrowDown"){
+        if (!(window as any).cordova) {
+            return (
+                <div
+                    className="main-video"
+                    tabIndex={0}
+                    onClick={() => {
                         appState.mainEpgVisible = true;
                         appState.infoBoxVisible = true;
-                        appState.mainEpg.loadEpg();
-                    }
-                    //this.text += "  " + e.keyCode + " " + e.key;
-                }}
+                    }}
+                    onKeyDown={(e: KeyboardEvent<any>) => {
+                        // console.log("keyDown=", e.keyCode, e.key);
+                        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                            appState.mainEpgVisible = true;
+                            appState.infoBoxVisible = true;
+                            appState.mainEpg.loadEpg();
+                        }
+                        //this.text += "  " + e.keyCode + " " + e.key;
+                    }}
 
-                ref={(e) => {
-                    appState.nativePlayer = e;
-                    console.log("controller", (appState.nativePlayer as any));
-                }}
-                style={style} width={screen.width} height={screen.height}>
-                <source
-                    src="http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/106/index.m3u8?utc=1494406801&lutc=1494590932"
-                    type="application/x-mpegURL"/>
-            </video>
-        );
+                    ref={(e) => {
+                        //appState.nativePlayer = e;
+                        console.log("controller", (appState.nativePlayer as any));
+                    }}
+                    style={{...style,backgroundColor:"silver"}} width={screen.width} height={screen.height}>
+                </div>
+            );
+        }
+        else {
+            return (
+                <video
+                    className="main-video"
+                    tabIndex={0}
+                    onClick={() => {
+                        appState.mainEpgVisible = true;
+                        appState.infoBoxVisible = true;
+                    }}
+                    onKeyDown={(e: KeyboardEvent<any>) => {
+                        // console.log("keyDown=", e.keyCode, e.key);
+                        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                            appState.mainEpgVisible = true;
+                            appState.infoBoxVisible = true;
+                            appState.mainEpg.loadEpg();
+                        }
+                        //this.text += "  " + e.keyCode + " " + e.key;
+                    }}
+
+                    ref={(e) => {
+                        appState.nativePlayer = e;
+                        console.log("controller", (appState.nativePlayer as any));
+                    }}
+                    style={style} width={screen.width} height={screen.height}>
+                    <source
+                        src="http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/106/index.m3u8?utc=1494406801&lutc=1494590932"
+                        type="application/x-mpegURL"/>
+                </video>
+            );
+        }
         // return (
         //     <video controls style={style} width={appState.screenSize.width} height={appState.screenSize.height}>
         //         <source

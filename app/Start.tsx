@@ -8,8 +8,16 @@ moment.locale("ru");
 
 console.log("platform", platform);
 
+
+function startTimer(){
+    setInterval(()=>{
+        $(".timer-str").text(moment().format("hh:mm"));
+    },1000);
+}
+
 if (!(window as any).cordova){
     ReactDOM.render(<App ref={(e: any) => setApp(e)}/>, document.body);
+    startTimer();
 }
 else {
     var myapp = {
@@ -39,6 +47,7 @@ else {
                 appState.screenSize = screensize;
                 console.log("screensize", screensize)
                 ReactDOM.render(<App ref={(e: any) => setApp(e)}/>, document.body);
+                startTimer();
             });
 
             //navigator.geolocation.getCurrentPosition((pos:Position)=>{console.log(new Date(pos.timestamp))});
