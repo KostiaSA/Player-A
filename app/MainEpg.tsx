@@ -147,7 +147,14 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
         }
     }
 
-    category: string = "ВСЕ";
+
+    setCategoryFilter(category: string) {
+        this.focusedChannelId = -1;
+        this.category = category;
+        this.loadEpg();
+    }
+
+    @observable category: string = "ВСЕ";
     epg: IEpg[];
 
 
@@ -159,7 +166,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
             cmd: LOAD_CURRENT_EPG,
             login: appState.login,
             password: appState.password,
-            category:this.category
+            category: this.category
         };
 
         httpRequest<ILoadCurrentEpgReq, ILoadCurrentEpgAns>(req)
@@ -290,7 +297,9 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                 }}
                 style={style}>
                 <div style={{height: headerHeight}}>
-                    <span className="timer-str" style={{fontSize: 16, color: "yellow", padding: 3}}></span>
+                    <span className="timer-str" style={{fontSize: 16, color: "darkturquoise", padding: 3}}></span>
+                    <span style={{fontSize: 16, color: "white", padding: 3, float:"right"}}>каналы: {this.category.toLocaleUpperCase()}</span>
+
                     {/*<button onClick={() => {*/}
                     {/*console.log("пауза");*/}
                     {/*appState.nativePlayer.pause()*/}

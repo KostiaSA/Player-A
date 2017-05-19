@@ -53,6 +53,7 @@ export class App extends React.Component<any, any> {
 
     enterKeyDownCounter: number = 0;
 
+
     componentDidMount() {
         // setTimeout(() => {
         //     appState.mainEpgVisible = true;
@@ -92,7 +93,11 @@ export class App extends React.Component<any, any> {
         }, false);
 
         document.addEventListener("keyup", (e: any) => {
+
+            if (appState.mainEpgPopupVisible)
+                return;
             //console.log("global keyup", e.keyCode);
+
             if (e.keyCode === 13 && this.enterKeyDownCounter === 1) {
                 if (appState.mainEpg)
                     appState.mainEpg.enterKeyPressed();

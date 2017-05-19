@@ -47,6 +47,11 @@ export class MainEpgPopup extends React.Component<IMainEpgPopupProps, any> {
         }
     }
 
+    categoryClick(category: string) {
+        this.closePopup();
+        appState.mainEpg.setCategoryFilter(category);
+    }
+
     render(): any {
 
         let style: CSSProperties = {
@@ -91,19 +96,6 @@ export class MainEpgPopup extends React.Component<IMainEpgPopupProps, any> {
             backgroundColor: "transparent"
         };
 
-        /*
-         HD
-         взрослые
-         детские
-         другие
-         дру�ие
-         кино
-         музыка
-         новости
-         познавательные
-         развлекательные
-         */
-
         let chName = "";
         if (appState.mainEpg && appState.mainEpg.focusedEpg)
             chName = appState.mainEpg.focusedEpg.channelTitle;
@@ -131,40 +123,61 @@ export class MainEpgPopup extends React.Component<IMainEpgPopupProps, any> {
                 <table>
                     <tr>
                         <td>
-                            <button style={chGroupButtonStyle}>ВСЕ</button>
+                            <button style={chGroupButtonStyle} onClick={() => {
+                                this.categoryClick("ВСЕ")
+                            }}>ВСЕ
+                            </button>
                         </td>
                         <td>
-                            <button style={chGroupButtonStyle}>познавательные</button>
+                            <button style={chGroupButtonStyle}onClick={(e:any) => {
+                                this.categoryClick("познавательные");
+                            }}>познавательные</button>
                         </td>
                         <td>
-                            <button style={chGroupButtonStyle}>HD каналы</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button style={chGroupButtonStyle}>кино</button>
-                        </td>
-                        <td>
-                            <button style={chGroupButtonStyle}>развлекательные</button>
-                        </td>
-                        <td>
-                            <button style={chGroupButtonStyle}>взрослые</button>
+                            <button style={chGroupButtonStyle}onClick={() => {
+                                this.categoryClick("HD")
+                            }}>HD каналы</button>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <button style={chGroupButtonStyle}>новости</button>
+                            <button style={chGroupButtonStyle}onClick={() => {
+                                this.categoryClick("кино")
+                            }}>кино</button>
                         </td>
                         <td>
-                            <button style={chGroupButtonStyle}>детские</button>
+                            <button style={chGroupButtonStyle}onClick={() => {
+                                this.categoryClick("развлекательные")
+                            }}>развлекательные</button>
                         </td>
                         <td>
-                            <button style={chGroupButtonStyle}>прочие</button>
+                            <button style={chGroupButtonStyle}onClick={() => {
+                                this.categoryClick("взрослые")
+                            }}>взрослые</button>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <button style={chGroupButtonStyle}>музыка</button>
+                            <button style={chGroupButtonStyle}onClick={() => {
+                                this.categoryClick("новости")
+                            }}>новости</button>
+                        </td>
+                        <td>
+                            <button style={chGroupButtonStyle}onClick={() => {
+                                this.categoryClick("детские")
+                            }}>детские</button>
+                        </td>
+                        <td>
+                            <button style={chGroupButtonStyle}onClick={() => {
+                                this.categoryClick("прочие")
+                            }}>прочие</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button style={chGroupButtonStyle}onClick={() => {
+                                this.categoryClick("музыка")
+                            }}>музыка</button>
                         </td>
                     </tr>
                 </table>
