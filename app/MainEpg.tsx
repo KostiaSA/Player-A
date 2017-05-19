@@ -55,7 +55,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
 
         let testSpan: any = null;
         //testSpan=<span>{this.props.data.time.toString()} - {this.props.data.endtime.toString()}</span>;
-        testSpan = <span>{this.props.data.currtime.toString()}</span>;
+        //testSpan = <span>{this.props.data.currtime.toString()}</span>;
 
 
         let time = (new Date(this.props.data.time)).getTime();
@@ -72,7 +72,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                                  src={config.apiUrl.replace("api", "") + "kit/providers/" + this.props.data.channelImage}/>
                         </div>
                     </td>
-                    <td>
+                    <td style={{width: "100%"}}>
                         <div style={{padding: 2, height: 23}}>
                             {testSpan}
                             <span style={{marginRight: 5, color: "#FFC107"}}>{this.props.data.channelTitle}</span>
@@ -85,8 +85,8 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                         </div>
                     </td>
                     <td>
-                        <div style={{height: 6, width: 30, border: "1px solid orange", backgroundColor: "black"}}>
-                            <div style={{height: 6, width: currtimePercent * 30, backgroundColor: "orange"}}>
+                        <div style={{height: 6, width: 30, border: "1px solid rgba(255, 193, 7, 0.82)", backgroundColor: "black"}}>
+                            <div style={{height: 6, width: currtimePercent * 30, backgroundColor: "rgba(255, 193, 7, 0.82)"}}>
                             </div>
                         </div>
                     </td>
