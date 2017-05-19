@@ -42,6 +42,7 @@ export interface IEpg {
     channelUrl: string;
     time: string;
     endtime: string;
+    currtime: string;
     title: string;
     categoryTitle: string;
     desc: string;

@@ -53,8 +53,18 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
         if (this.props.data.actors && this.props.data.actors !== "")
             actorsSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{", в ролях: " + this.props.data.actors}</span>;
 
+        let testSpan: any = null;
+        //testSpan=<span>{this.props.data.time.toString()} - {this.props.data.endtime.toString()}</span>;
+        testSpan = <span>{this.props.data.currtime.toString()}</span>;
+
+
+        let time = (new Date(this.props.data.time)).getTime();
+        let endtime = (new Date(this.props.data.endtime)).getTime();
+        let currtime = (new Date(this.props.data.currtime)).getTime();
+        let currtimePercent = (currtime - time) / (endtime - time);
+
         return (
-            <table style={{whiteSpace: "normal", lineHeight: "93%", height: 25, overflow: "hidden"}}>
+            <table style={{whiteSpace: "normal", lineHeight: "93%", height: 25, overflow: "hidden", width: "100%"}}>
                 <tr>
                     <td>
                         <div style={{height: 25, width: 50, textAlign: "right"}}>
@@ -63,7 +73,8 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                         </div>
                     </td>
                     <td>
-                        <div style={{padding: 2, height: 25}}>
+                        <div style={{padding: 2, height: 23}}>
+                            {testSpan}
                             <span style={{marginRight: 5, color: "#FFC107"}}>{this.props.data.channelTitle}</span>
                             <span style={{color: "white", marginRight: 5}}>{this.props.data.title}</span>
                             {genreSpan}
@@ -71,6 +82,12 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                             {directorSpan}
                             {actorsSpan}
                             <span style={{fontSize: 13, color: "#a2a2a2"}}>{", " + this.props.data.desc}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style={{height: 6, width: 30, border: "1px solid orange", backgroundColor: "black"}}>
+                            <div style={{height: 6, width: currtimePercent * 30, backgroundColor: "orange"}}>
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -119,15 +136,18 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
         httpRequest<ILoadCurrentEpgReq, ILoadCurrentEpgAns>(req)
             .then((ans: any) => {
-                if (!this.epg) {
+                console.log("loadEpg", ans.epg[0]);
+
+                if (!this.epg || this.epg.length !== ans.epg.length) {
                     this.epg = ans.epg;
                     this.comboGridApi.setRowData(this.epg);
                 }
                 else {
-                    this.epg.length = 0;
-                    for (let item of ans.epg) {
-                        this.epg.push(item);
-                    }
+                    let index=0;
+                    this.comboGridApi.forEachNode( function(node:any) {
+                        node.data=ans.epg[index];
+                        index++;
+                    });
                     this.comboGridApi.refreshView();
                 }
 
@@ -217,7 +237,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
         cols.push(fromCol);
 
         let agOpt = {
-            rowHeight: 38,
+            rowHeight: 42,
             headerHeight: 0,
             columnDefs: cols,
             suppressColumnVirtualisation: true,
