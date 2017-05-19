@@ -31,10 +31,6 @@ else {
         // 'load', 'deviceready', 'offline', and 'online'.
         bindEvents: function () {
             document.addEventListener('deviceready', this.onDeviceReady, false);
-            document.addEventListener("backbutton", () => {
-                if (appState.mainEpg)
-                    appState.mainEpg.backButtonPressed();
-            }, false);
         },
         // deviceready Event Handler
         //

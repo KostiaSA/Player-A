@@ -85,12 +85,15 @@ body {
 .ag-dark .ag-body {
     background-color: transparent;
 }
+
 .ag-dark .ag-row-odd {
     background-color: transparent;;
 }
+
 .ag-dark .ag-row-even {
     background-color: transparent;;
 }
+
 .ag-dark .ag-row-selected {
     background-color: white;
 }
@@ -98,6 +101,7 @@ body {
 .ag-dark .ag-overlay-loading-wrapper {
     background-color: transparent;
 }
+
 .ag-dark .ag-overlay-loading-center {
     background-color: #fff;
     border: 1px solid #808080;

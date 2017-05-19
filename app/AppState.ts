@@ -5,6 +5,7 @@ import {MainEpg} from "./MainEpg";
 import {httpRequest} from "./utils/httpRequest";
 import {GET_ENCRYPT_KEY_CMD, IGetEncryptKeyAns, IGetEncryptKeyReq, ILoginAns, ILoginReq, LOGIN_CMD} from "./api/api";
 import {InfoBox} from "./InfoBox";
+import {MainEpgPopup} from "./MainEpgPopup";
 
 
 export class AppState {
@@ -16,6 +17,7 @@ export class AppState {
 
 
     mainEpg: MainEpg;
+    mainEpgPopup: MainEpgPopup;
     infoBox: InfoBox;
 
     //@observable winHeight: number;
@@ -23,6 +25,7 @@ export class AppState {
     screenSize: { height: number, width: number };
 
     @observable mainEpgVisible: boolean = false;
+    @observable mainEpgPopupVisible: boolean = false;
     @observable infoBoxVisible: boolean = false;
 
     nativePlayer: HTMLVideoElement;

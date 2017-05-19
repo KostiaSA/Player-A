@@ -6,6 +6,7 @@ import {observer} from "mobx-react";
 import {MainVideo} from "./MainVideo";
 import {MainEpg} from "./MainEpg";
 import {InfoBox} from "./InfoBox";
+import {MainEpgPopup} from "./MainEpgPopup";
 
 
 export interface IAppPage {
@@ -49,6 +50,9 @@ export class App extends React.Component<any, any> {
 
     }
 
+
+    enterKeyDownCounter: number = 0;
+
     componentDidMount() {
         // setTimeout(() => {
         //     appState.mainEpgVisible = true;
@@ -66,14 +70,47 @@ export class App extends React.Component<any, any> {
         });
 
         document.addEventListener("keydown", (e: any) => {
-            //console.log("global keydown", e.keyCode);
-            if (!appState.mainEpgVisible && (e.keyCode===38 || e.keyCode===40 )) {
+            console.log("global keydown", e.keyCode);
+            if (e.keyCode === 13) {
+                this.enterKeyDownCounter++;
+                //console.log("enterKeyDownCounter", this.enterKeyDownCounter);
+
+                if (this.enterKeyDownCounter > 5) {  // popup
+                    this.enterKeyDownCounter = 0;
+
+                    if (appState.mainEpg)
+                        appState.mainEpg.popupKeyPressed();
+
+                }
+            }
+            if (!appState.mainEpgVisible && (e.keyCode === 38 || e.keyCode === 40 )) {
                 appState.mainEpgVisible = true;
                 appState.infoBoxVisible = true;
                 appState.mainEpg.loadEpg();
             }
 
         }, false);
+
+        document.addEventListener("keyup", (e: any) => {
+            //console.log("global keyup", e.keyCode);
+            if (e.keyCode === 13 && this.enterKeyDownCounter === 1) {
+                if (appState.mainEpg)
+                    appState.mainEpg.enterKeyPressed();
+            }
+            if (e.keyCode === 13) {
+                this.enterKeyDownCounter = 0;
+            }
+
+        }, false);
+
+        document.addEventListener("backbutton", () => {
+            if (appState.mainEpg)
+                appState.mainEpg.backButtonPressed();
+            if (appState.mainEpgPopup)
+                appState.mainEpgPopup.backButtonPressed();
+        }, false);
+
+
     };
 
 
@@ -90,6 +127,7 @@ export class App extends React.Component<any, any> {
                 }}>
                     <MainVideo/>
                     <MainEpg/>
+                    <MainEpgPopup/>
                     <InfoBox/>
                 </div>
             );
@@ -99,6 +137,7 @@ export class App extends React.Component<any, any> {
                 <div style={{position: "relative", height: "100%"}}>
                     <MainVideo/>
                     <MainEpg/>
+                    <MainEpgPopup/>
                     <InfoBox/>
                 </div>
             );

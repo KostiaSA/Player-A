@@ -74,6 +74,7 @@ export const LOAD_CURRENT_EPG = "101";
 export interface ILoadCurrentEpgReq extends IReq {
     login: string;
     password: string;
+    category:string;
 }
 
 export interface ILoadCurrentEpgAns extends IAns {
