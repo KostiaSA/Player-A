@@ -84,6 +84,8 @@ export class App extends React.Component<any, any> {
 
                     if (appState.mainEpg)
                         appState.mainEpg.popupKeyPressed();
+                    if (appState.archEpg)
+                        appState.archEpg.popupKeyPressed();
 
                 }
             }
