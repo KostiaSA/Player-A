@@ -155,8 +155,8 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                 // "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/106/index.m3u8?utc=1494406801&lutc=1494590932"
                 let utc= moment(this.focusedEpg!.time).add(3,"h").toDate().getTime().toString().substr(0,10);
                 let lutc= (new Date()).getTime().toString().substr(0,10);
-                appState.nativePlayer.src = this.focusedEpg!.channelUrl+"?utc="+utc+"&lutc="+lutc;
-                console.log("appState.nativePlayer.src",appState.nativePlayer.src);
+                console.log("appState.nativePlayer.src",appState.mainEpg.focusedEpg!.channelUrl+"?utc="+utc+"&lutc="+lutc);
+                appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl+"?utc="+utc+"&lutc="+lutc;
                 appState.nativePlayer.play();
             }
             else if (this.focusedEpg!.time < this.focusedEpg!.currtime) {

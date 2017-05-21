@@ -94,7 +94,7 @@ export class App extends React.Component<any, any> {
             }
 
             if (e.keyCode === 37 || e.keyCode === 39) {  // влево вправо
-                if (appState.mainEpgVisible)
+                if (appState.mainEpgVisible && !appState.mainEpgPopupVisible)
                     appState.showArchEpg();
             }
 
