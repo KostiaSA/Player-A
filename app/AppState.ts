@@ -1,5 +1,5 @@
 import {observable} from "mobx";
-import {IAppPage} from "./App";
+import {App, IAppPage} from "./App";
 import moment = require("moment");
 import {MainEpg} from "./MainEpg";
 import {httpRequest} from "./utils/httpRequest";
@@ -18,6 +18,7 @@ export class AppState {
     encryptKey: string;
 
 
+    app: App;
     mainEpg: MainEpg;
     mainEpgPopup: MainEpgPopup;
 
@@ -124,6 +125,13 @@ export class AppState {
         this.mainEpgVisible=false;
         this.archEpgVisible=true;
         this.archEpg.loadEpg();
+        this.app.forceUpdate();
+    }
+
+    closeArchEpg(){
+        this.mainEpgVisible=true;
+        this.archEpgVisible=false;
+        setTimeout(()=>{$(this.mainEpg.focusedElement).focus() },1);
     }
 }
 

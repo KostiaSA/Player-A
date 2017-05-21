@@ -7,7 +7,10 @@ import CSSProperties = React.CSSProperties;
 import moment = require("moment");
 import {appState} from "./AppState";
 import {KeyboardEvent} from "react";
-import {IEpg, ILoadCurrentEpgAns, ILoadCurrentEpgReq, LOAD_CURRENT_EPG} from "./api/api";
+import {
+    IEpg, ILoadArchEpgAns, ILoadArchEpgReq, ILoadCurrentEpgAns, ILoadCurrentEpgReq, LOAD_ARCH_EPG,
+    LOAD_CURRENT_EPG
+} from "./api/api";
 import {httpRequest} from "./utils/httpRequest";
 import {AgGridReact} from "ag-grid-react";
 import {AgGridColDef} from "./AgGridColDef";
@@ -28,8 +31,8 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
 
         let imgStyle: CSSProperties = {
             display: "inline-block",
-            maxHeight: 25,
-            maxWidth: 50,
+            maxHeight: 35,
+            maxWidth: 60,
             height: "auto",
             width: "auto",
         }
@@ -63,19 +66,43 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
         let currtime = (new Date(this.props.data.currtime)).getTime();
         let currtimePercent = (currtime - time) / (endtime - time);
 
+        let timeColor = "coral"; // архив
+        let state = "архив";
+        if (this.props.data.endtime < this.props.data.currtime) {
+            timeColor = "coral"; // архив
+            state = "архив";
+        }
+        else if (this.props.data.time < this.props.data.currtime) {
+            timeColor = "darkturquoise"; // в эфире
+            state = "сейчас";
+        }
+        else {
+            timeColor = "yellowgreen"; // будет
+            state = "будет";
+        }
+
+
         return (
             <table style={{whiteSpace: "normal", lineHeight: "93%", height: 25, overflow: "hidden", width: "100%"}}>
                 <tr>
                     <td>
                         <div style={{height: 25, width: 50, textAlign: "right"}}>
                             <img style={imgStyle}
-                                 src={config.apiUrl.replace("api", "") + "kit/providers/" + this.props.data.channelImage}/>
+                                 src={config.apiUrl.replace("api", "") + "kit/providers/new.s-tv.ru/images/" + this.props.data.image}/>
                         </div>
                     </td>
                     <td style={{width: "100%"}}>
                         <div style={{padding: 2, height: 23}}>
                             {testSpan}
-                            <span style={{marginRight: 5, color: "#FFC107"}}>{this.props.data.time}</span>
+                            <span style={{
+                                marginRight: 5,
+                                color: timeColor,
+                                width: 50
+                            }}>{moment(this.props.data.time).add(3,"h").format("dd")  }</span>
+                            <span style={{
+                                marginRight: 5,
+                                color: timeColor
+                            }}>{moment(this.props.data.time).add(3,"h").format("HH:mm")}</span>
                             <span style={{color: "white", marginRight: 5}}>{this.props.data.title}</span>
                             {genreSpan}
                             {yearSpan}
@@ -85,19 +112,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                         </div>
                     </td>
                     <td>
-                        <div style={{
-                            height: 6,
-                            width: 30,
-                            border: "1px solid rgba(255, 193, 7, 0.82)",
-                            backgroundColor: "black"
-                        }}>
-                            <div style={{
-                                height: 6,
-                                width: currtimePercent * 30,
-                                backgroundColor: "rgba(255, 193, 7, 0.82)"
-                            }}>
-                            </div>
-                        </div>
+                        <span style={{color: timeColor, fontSize:12}}>{state}</span>
                     </td>
                 </tr>
             </table>
@@ -126,18 +141,37 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
     };
 
     backButtonPressed() {
-        if (appState.archEpgVisible && !appState.archEpgPopupVisible) {
-            appState.archEpgVisible = false;
-            appState.infoBoxVisible = false;
-        }
+        appState.closeArchEpg();
     }
 
     enterKeyPressed() {
         if (appState.archEpgVisible && !appState.archEpgPopupVisible) {
-            appState.archEpgVisible = false;
-            appState.infoBoxVisible = false;
-            appState.nativePlayer.src = this.focusedEpg!.channelUrl;
-            appState.nativePlayer.play();
+
+            if (this.focusedEpg!.endtime < this.focusedEpg!.currtime) {
+                // архив
+                appState.archEpgVisible = false;
+                appState.mainEpgVisible = false;
+                appState.infoBoxVisible = false;
+                // "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/106/index.m3u8?utc=1494406801&lutc=1494590932"
+                let utc= moment(this.focusedEpg!.time).add(3,"h").toDate().getTime().toString().substr(0,10);
+                let lutc= (new Date()).getTime().toString().substr(0,10);
+                appState.nativePlayer.src = this.focusedEpg!.channelUrl+"?utc="+utc+"&lutc="+lutc;
+                console.log("appState.nativePlayer.src",appState.nativePlayer.src);
+                appState.nativePlayer.play();
+            }
+            else if (this.focusedEpg!.time < this.focusedEpg!.currtime) {
+                // в эфире
+                appState.archEpgVisible = false;
+                appState.mainEpgVisible = false;
+                appState.infoBoxVisible = false;
+                appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl;
+                appState.nativePlayer.play();
+            }
+            else {
+                // будет
+
+            }
+
         }
     }
 
@@ -162,14 +196,14 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
         await appState.doLogin();
 
 
-        let req: ILoadCurrentEpgReq = {
-            cmd: LOAD_CURRENT_EPG,
+        let req: ILoadArchEpgReq = {
+            cmd: LOAD_ARCH_EPG,
             login: appState.login,
             password: appState.password,
-            category: this.category
+            channelId: appState.mainEpg.focusedChannelId
         };
 
-        httpRequest<ILoadCurrentEpgReq, ILoadCurrentEpgAns>(req)
+        httpRequest<ILoadArchEpgReq, ILoadArchEpgAns>(req)
             .then((ans: any) => {
                 console.log("loadEpg", ans.epg[0]);
 
@@ -186,7 +220,7 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                     this.comboGridApi.refreshView();
                 }
 
-                if (this.focusedChannelId === -1) {
+                if (!this.focusedTime) {
                     this.comboGridApi.ensureIndexVisible(0);
                     this.comboGridApi.setFocusedCell(0, "col0");
                     console.log("setFocusedCell(0)");
@@ -194,9 +228,9 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                 else {
                     let index = 0;
                     for (let item of this.epg) {
-                        if (item.channelId === this.focusedChannelId) {
+                        if (item.time <= this.focusedTime && item.endtime >= this.focusedTime) {
 
-                            if (!this.isChannelVisible(this.focusedChannelId)) {
+                            if (!this.isTimeVisible(this.focusedTime)) {
                                 this.comboGridApi.ensureIndexVisible(this.epg.length - 1);
                                 this.comboGridApi.ensureIndexVisible(index);
                                 this.comboGridApi.setFocusedCell(index, "col0");
@@ -218,15 +252,15 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
 
     }
 
-    private isChannelVisible(channelId: number): boolean {
+    private isTimeVisible(time: string): boolean {
         var nodes = this.comboGridApi.getRenderedNodes();
         for (let node of nodes) {
-            if (node.data.channelId === channelId) {
-                console.log("ch visible");
+            if (node.data.time === time) {
+                console.log("time visible");
                 return true;
             }
         }
-        console.log("ch NOT visible");
+        console.log("time NOT visible");
         return false;
     }
 
@@ -239,7 +273,7 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
 
     };
 
-    focusedChannelId: number = -1;
+    focusedTime: string;
     focusedEpg?: IEpg;
 
     //@observable text: string = "";
@@ -298,7 +332,12 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                 style={style}>
                 <div style={{height: headerHeight}}>
                     <span className="timer-str" style={{fontSize: 16, color: "darkturquoise", padding: 3}}></span>
-                    <span style={{fontSize: 16, color: "white", padding: 3, float:"right"}}>каналы: {this.category.toLocaleUpperCase()}</span>
+                    <span style={{
+                        fontSize: 16,
+                        color: "white",
+                        padding: 3,
+                        float: "right"
+                    }}>каналы: {this.category.toLocaleUpperCase()}</span>
 
                 </div>
                 <div id="archepggrid"
@@ -322,11 +361,11 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                             }
 
                             if (this.focusedEpg) {
-                                this.focusedChannelId = this.focusedEpg.channelId;
-                                appState.infoBox.loadInfo(this.focusedEpg.channelId, this.focusedEpg.time);
+                                this.focusedTime = this.focusedEpg.time;
+                                appState.infoBox.loadInfo(this.focusedEpg.channelId, this.focusedTime);
                             }
                             else
-                                alert("focusedEpg?");
+                                alert("focused time Epg?");
 
                         }}
 

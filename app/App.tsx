@@ -57,6 +57,7 @@ export class App extends React.Component<any, any> {
 
 
     componentDidMount() {
+        appState.app=this;
         // setTimeout(() => {
         //     appState.mainEpgVisible = true;
         //     appState.infoBoxVisible = true;
@@ -86,7 +87,7 @@ export class App extends React.Component<any, any> {
 
                 }
             }
-            if (!appState.mainEpgVisible && (e.keyCode === 38 || e.keyCode === 40 )) { //вверх вниз
+            if (!appState.mainEpgVisible && !appState.archEpgVisible && (e.keyCode === 38 || e.keyCode === 40 )) { //вверх вниз
                 appState.mainEpgVisible = true;
                 appState.infoBoxVisible = true;
                 appState.mainEpg.loadEpg();
@@ -108,6 +109,8 @@ export class App extends React.Component<any, any> {
             if (e.keyCode === 13 && this.enterKeyDownCounter === 1) {
                 if (appState.mainEpg)
                     appState.mainEpg.enterKeyPressed();
+                if (appState.archEpg)
+                    appState.archEpg.enterKeyPressed();
             }
             if (e.keyCode === 13) {
                 this.enterKeyDownCounter = 0;
@@ -120,6 +123,10 @@ export class App extends React.Component<any, any> {
                 appState.mainEpg.backButtonPressed();
             if (appState.mainEpgPopup)
                 appState.mainEpgPopup.backButtonPressed();
+            if (appState.archEpg)
+                appState.archEpg.backButtonPressed();
+            if (appState.archEpgPopup)
+                appState.archEpgPopup.backButtonPressed();
         }, false);
 
 

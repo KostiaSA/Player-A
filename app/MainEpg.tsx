@@ -88,13 +88,13 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                         <div style={{
                             height: 6,
                             width: 30,
-                            border: "1px solid rgba(255, 193, 7, 0.82)",
+                            border: "1px solid rgba(0, 206, 209, 0.75)",
                             backgroundColor: "black"
                         }}>
                             <div style={{
                                 height: 6,
                                 width: currtimePercent * 30,
-                                backgroundColor: "rgba(255, 193, 7, 0.82)"
+                                backgroundColor: "rgba(0, 206, 209, 0.75)"
                             }}>
                             </div>
                         </div>
@@ -241,6 +241,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
     focusedChannelId: number = -1;
     focusedEpg?: IEpg;
+    focusedElement:Element;
 
     //@observable text: string = "";
     // http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/508/index.m3u8
@@ -348,6 +349,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                             let focusedRowIndex = this.comboGridApi.getFocusedCell().rowIndex;
                             let renderedRows = this.comboGridApi.getRenderedNodes();
 
+                            this.focusedElement=document.activeElement;
                             this.focusedEpg = undefined;//renderedRows[0].data;
 
                             for (let row of renderedRows) {

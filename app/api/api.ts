@@ -50,6 +50,7 @@ export interface IEpg {
     year: string;
     director: string;
     actors: string;
+    image: string;
 }
 
 export interface IInfo {

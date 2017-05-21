@@ -47,10 +47,10 @@ export class ArchEpgPopup extends React.Component<IArchEpgPopupProps, any> {
         }
     }
 
-    categoryClick(category: string) {
-        this.closePopup();
-        appState.archEpg.setCategoryFilter(category);
-    }
+    // categoryClick(category: string) {
+    //     this.closePopup();
+    //     appState.archEpg.setCategoryFilter(category);
+    // }
 
     render(): any {
 
@@ -121,65 +121,6 @@ export class ArchEpgPopup extends React.Component<IArchEpgPopupProps, any> {
                     <span>фильтр по категориям</span>
                 </div>
                 <table>
-                    <tr>
-                        <td>
-                            <button style={chGroupButtonStyle} onClick={() => {
-                                this.categoryClick("ВСЕ")
-                            }}>ВСЕ
-                            </button>
-                        </td>
-                        <td>
-                            <button style={chGroupButtonStyle}onClick={(e:any) => {
-                                this.categoryClick("познавательные");
-                            }}>познавательные</button>
-                        </td>
-                        <td>
-                            <button style={chGroupButtonStyle}onClick={() => {
-                                this.categoryClick("HD")
-                            }}>HD каналы</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button style={chGroupButtonStyle}onClick={() => {
-                                this.categoryClick("кино")
-                            }}>кино</button>
-                        </td>
-                        <td>
-                            <button style={chGroupButtonStyle}onClick={() => {
-                                this.categoryClick("развлекательные")
-                            }}>развлекательные</button>
-                        </td>
-                        <td>
-                            <button style={chGroupButtonStyle}onClick={() => {
-                                this.categoryClick("взрослые")
-                            }}>взрослые</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button style={chGroupButtonStyle}onClick={() => {
-                                this.categoryClick("новости")
-                            }}>новости</button>
-                        </td>
-                        <td>
-                            <button style={chGroupButtonStyle}onClick={() => {
-                                this.categoryClick("детские")
-                            }}>детские</button>
-                        </td>
-                        <td>
-                            <button style={chGroupButtonStyle}onClick={() => {
-                                this.categoryClick("прочие")
-                            }}>прочие</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button style={chGroupButtonStyle}onClick={() => {
-                                this.categoryClick("музыка")
-                            }}>музыка</button>
-                        </td>
-                    </tr>
                 </table>
 
             </div>
