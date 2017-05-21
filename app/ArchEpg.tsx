@@ -75,7 +75,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                     <td style={{width: "100%"}}>
                         <div style={{padding: 2, height: 23}}>
                             {testSpan}
-                            <span style={{marginRight: 5, color: "#FFC107"}}>{this.props.data.channelTitle}</span>
+                            <span style={{marginRight: 5, color: "#FFC107"}}>{this.props.data.time}</span>
                             <span style={{color: "white", marginRight: 5}}>{this.props.data.title}</span>
                             {genreSpan}
                             {yearSpan}
@@ -148,13 +148,13 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
     }
 
 
-    setCategoryFilter(category: string) {
-        this.focusedChannelId = -1;
-        this.category = category;
-        this.loadEpg();
-    }
+    // setCategoryFilter(category: string) {
+    //     this.focusedChannelId = -1;
+    //     this.category = category;
+    //     this.loadEpg();
+    // }
 
-    @observable category: string = "ВСЕ";
+    @observable category: string = "АРХИВ";
     epg: IEpg[];
 
 

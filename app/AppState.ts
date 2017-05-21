@@ -121,7 +121,9 @@ export class AppState {
     }
 
     showArchEpg(){
-        alert("showArchEpg");
+        this.mainEpgVisible=false;
+        this.archEpgVisible=true;
+        this.archEpg.loadEpg();
     }
 }
 
