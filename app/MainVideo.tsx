@@ -44,7 +44,6 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
             return (
                 <div
                     className="main-video"
-                    tabIndex={0}
                     onClick={() => {
                         appState.mainEpgVisible = true;
                         appState.infoBoxVisible = true;
@@ -56,7 +55,6 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                         console.log("controller", (appState.nativePlayer as any));
                     }}
                     style={{...style,backgroundColor:"silver"}} width={screen.width} height={screen.height}>
-                    x
                 </div>
             );
         }
@@ -64,7 +62,6 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
             return (
                 <video
                     className="main-video"
-                    tabIndex={0}
                     onClick={() => {
                         appState.mainEpgVisible = true;
                         appState.infoBoxVisible = true;
@@ -77,7 +74,7 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                     }}
                     style={style} width={screen.width} height={screen.height}>
                     <source
-                        src="http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/106/index.m3u8?utc=1494406801&lutc=1494590932"
+                        src="http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8"
                         type="application/x-mpegURL"/>
                 </video>
             );

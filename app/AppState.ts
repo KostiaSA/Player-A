@@ -6,6 +6,8 @@ import {httpRequest} from "./utils/httpRequest";
 import {GET_ENCRYPT_KEY_CMD, IGetEncryptKeyAns, IGetEncryptKeyReq, ILoginAns, ILoginReq, LOGIN_CMD} from "./api/api";
 import {InfoBox} from "./InfoBox";
 import {MainEpgPopup} from "./MainEpgPopup";
+import {ArchEpg} from "./ArchEpg";
+import {ArchEpgPopup} from "./ArchEpgPopup";
 
 
 export class AppState {
@@ -18,14 +20,20 @@ export class AppState {
 
     mainEpg: MainEpg;
     mainEpgPopup: MainEpgPopup;
+
+    archEpg: ArchEpg;
+    archEpgPopup: ArchEpgPopup;
+
     infoBox: InfoBox;
 
-    //@observable winHeight: number;
-    //@observable winWidth: number;
     screenSize: { height: number, width: number };
 
     @observable mainEpgVisible: boolean = false;
     @observable mainEpgPopupVisible: boolean = false;
+
+    @observable archEpgVisible: boolean = false;
+    @observable archEpgPopupVisible: boolean = false;
+
     @observable infoBoxVisible: boolean = false;
 
     nativePlayer: HTMLVideoElement;
@@ -110,6 +118,10 @@ export class AppState {
             width: this.getInfoBoxWidth(),
             bottom: this.getMenuPadding(),
         }
+    }
+
+    showArchEpg(){
+        alert("showArchEpg");
     }
 }
 

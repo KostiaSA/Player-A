@@ -7,6 +7,8 @@ import {MainVideo} from "./MainVideo";
 import {MainEpg} from "./MainEpg";
 import {InfoBox} from "./InfoBox";
 import {MainEpgPopup} from "./MainEpgPopup";
+import {ArchEpg} from "./ArchEpg";
+import {ArchEpgPopup} from "./ArchEpgPopup";
 
 
 export interface IAppPage {
@@ -84,10 +86,15 @@ export class App extends React.Component<any, any> {
 
                 }
             }
-            if (!appState.mainEpgVisible && (e.keyCode === 38 || e.keyCode === 40 )) {
+            if (!appState.mainEpgVisible && (e.keyCode === 38 || e.keyCode === 40 )) { //вверх вниз
                 appState.mainEpgVisible = true;
                 appState.infoBoxVisible = true;
                 appState.mainEpg.loadEpg();
+            }
+
+            if (e.keyCode === 37 || e.keyCode === 39) {  // влево вправо
+                if (appState.mainEpgVisible)
+                    appState.showArchEpg();
             }
 
         }, false);
@@ -133,6 +140,8 @@ export class App extends React.Component<any, any> {
                     <MainVideo/>
                     <MainEpg/>
                     <MainEpgPopup/>
+                    <ArchEpg/>
+                    <ArchEpgPopup/>
                     <InfoBox/>
                 </div>
             );
@@ -143,6 +152,8 @@ export class App extends React.Component<any, any> {
                     <MainVideo/>
                     <MainEpg/>
                     <MainEpgPopup/>
+                    <ArchEpg/>
+                    <ArchEpgPopup/>
                     <InfoBox/>
                 </div>
             );
