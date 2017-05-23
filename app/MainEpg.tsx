@@ -127,15 +127,17 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
     backButtonPressed() {
         if (appState.mainEpgVisible && !appState.mainEpgPopupVisible) {
-            appState.mainEpgVisible = false;
-            appState.infoBoxVisible = false;
+            appState.showVideo();
+            //appState.mainEpgVisible = false;
+            //appState.infoBoxVisible = false;
+            // appState.app.forceUpdate();
+            //console.log("backButtonPressed:-> appState.mainEpgVisible = false");
         }
     }
 
     enterKeyPressed() {
         if (appState.mainEpgVisible && !appState.mainEpgPopupVisible) {
-            appState.mainEpgVisible = false;
-            appState.infoBoxVisible = false;
+            appState.showVideo();
             appState.nativePlayer.src = this.focusedEpg!.channelUrl;
             appState.nativePlayer.play();
         }
@@ -241,7 +243,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
     focusedChannelId: number = -1;
     focusedEpg?: IEpg;
-    focusedElement:Element;
+    focusedElement: Element;
 
     //@observable text: string = "";
     // http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/508/index.m3u8
@@ -299,16 +301,21 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                 style={style}>
                 <div style={{height: headerHeight}}>
                     <span className="timer-str" style={{fontSize: 16, color: "darkturquoise", padding: 3}}></span>
-                    <span style={{fontSize: 16, color: "white", padding: 3, float:"right"}}>каналы: {this.category.toLocaleUpperCase()}</span>
+                    <span style={{
+                        fontSize: 16,
+                        color: "white",
+                        padding: 3,
+                        float: "right"
+                    }}>каналы: {this.category.toLocaleUpperCase()}</span>
 
                     {/*<button onClick={() => {*/}
-                    {/*console.log("пауза");*/}
-                    {/*appState.nativePlayer.pause()*/}
+                        {/*console.log("пауза");*/}
+                        {/*appState.nativePlayer.pause()*/}
                     {/*}}>Пауза*/}
                     {/*</button>*/}
                     {/*<button onClick={() => {*/}
-                    {/*console.log("пауза");*/}
-                    {/*appState.nativePlayer.play()*/}
+                        {/*console.log("Play");*/}
+                        {/*appState.nativePlayer.play()*/}
                     {/*}}>Play*/}
                     {/*</button>*/}
                     {/*<button onClick={() => {*/}
@@ -349,7 +356,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                             let focusedRowIndex = this.comboGridApi.getFocusedCell().rowIndex;
                             let renderedRows = this.comboGridApi.getRenderedNodes();
 
-                            this.focusedElement=document.activeElement;
+                            this.focusedElement = document.activeElement;
                             this.focusedEpg = undefined;//renderedRows[0].data;
 
                             for (let row of renderedRows) {

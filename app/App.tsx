@@ -152,6 +152,7 @@ export class App extends React.Component<any, any> {
                     <ArchEpg/>
                     <ArchEpgPopup/>
                     <InfoBox/>
+
                 </div>
             );
         }
@@ -164,6 +165,24 @@ export class App extends React.Component<any, any> {
                     <ArchEpg/>
                     <ArchEpgPopup/>
                     <InfoBox/>
+                    <button style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 100
+                    }}onClick={() => {
+                        console.log("Play");
+                        appState.nativePlayer.play()
+                    }}>Play
+                    </button>
+                    <button style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 10
+                    }} onClick={() => {
+                        console.log("пауза");
+                        appState.nativePlayer.pause()
+                    }}>Пауза
+                    </button>
                 </div>
             );
         }

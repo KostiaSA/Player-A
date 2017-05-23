@@ -88,7 +88,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                     <td>
                         <div style={{height: 25, width: 50, textAlign: "right"}}>
                             <img style={imgStyle}
-                                 src={config.apiUrl.replace("api", "") + "kit/providers/new.s-tv.ru/images/" + this.props.data.image}/>
+                                 src={config.apiUrl.replace("api", "") + "kit/providers/tv.yandex.ru/images/" + this.props.data.image}/>
                         </div>
                     </td>
                     <td style={{width: "100%"}}>
@@ -98,11 +98,11 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                                 marginRight: 5,
                                 color: timeColor,
                                 width: 50
-                            }}>{moment(this.props.data.time).add(3,"h").format("dd")  }</span>
+                            }}>{moment(this.props.data.time).add(3, "h").format("dd")  }</span>
                             <span style={{
                                 marginRight: 5,
                                 color: timeColor
-                            }}>{moment(this.props.data.time).add(3,"h").format("HH:mm")}</span>
+                            }}>{moment(this.props.data.time).add(3, "h").format("HH:mm")}</span>
                             <span style={{color: "white", marginRight: 5}}>{this.props.data.title}</span>
                             {genreSpan}
                             {yearSpan}
@@ -112,7 +112,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                         </div>
                     </td>
                     <td>
-                        <span style={{color: timeColor, fontSize:12}}>{state}</span>
+                        <span style={{color: timeColor, fontSize: 12}}>{state}</span>
                     </td>
                 </tr>
             </table>
@@ -141,7 +141,8 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
     };
 
     backButtonPressed() {
-        appState.closeArchEpg();
+        if (appState.archEpgVisible)
+            appState.closeArchEpg();
     }
 
     enterKeyPressed() {
@@ -153,10 +154,10 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                 appState.mainEpgVisible = false;
                 appState.infoBoxVisible = false;
                 // "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/106/index.m3u8?utc=1494406801&lutc=1494590932"
-                let utc= moment(this.focusedEpg!.time).add(3,"h").add(-1,"m").toDate().getTime().toString().substr(0,10);
-                let lutc= (new Date()).getTime().toString().substr(0,10);
-                console.log("appState.nativePlayer.src",appState.mainEpg.focusedEpg!.channelUrl+"?utc="+utc+"&lutc="+lutc);
-                appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl+"?utc="+utc+"&lutc="+lutc;
+                let utc = moment(this.focusedEpg!.time).add(3, "h").add(-1, "m").toDate().getTime().toString().substr(0, 10);
+                let lutc = (new Date()).getTime().toString().substr(0, 10);
+                console.log("appState.nativePlayer.src", appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc);
+                appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc;
                 appState.nativePlayer.play();
             }
             else if (this.focusedEpg!.time < this.focusedEpg!.currtime) {

@@ -45,8 +45,7 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                 <div
                     className="main-video"
                     onClick={() => {
-                        appState.mainEpgVisible = true;
-                        appState.infoBoxVisible = true;
+                        appState.showMainEpg();
                         appState.mainEpg.loadEpg();
                     }}
 
@@ -54,7 +53,7 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                         //appState.nativePlayer = e;
                         console.log("controller", (appState.nativePlayer as any));
                     }}
-                    style={{...style,backgroundColor:"silver"}} width={screen.width} height={screen.height}>
+                    style={{...style, backgroundColor: "silver"}} width={screen.width} height={screen.height}>
                 </div>
             );
         }
@@ -66,6 +65,10 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                         appState.mainEpgVisible = true;
                         appState.infoBoxVisible = true;
                         appState.mainEpg.loadEpg();
+                    }}
+
+                    onTimeUpdate={(e: any) => {
+                        console.log("onTimeUpdate", appState.nativePlayer.videoHeight,appState.nativePlayer.videoWidth,appState.nativePlayer.currentTime);
                     }}
 
                     ref={(e) => {

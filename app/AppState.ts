@@ -122,16 +122,39 @@ export class AppState {
     }
 
     showArchEpg(){
-        this.mainEpgVisible=false;
-        this.archEpgVisible=true;
+        this.mainEpgVisible = false;
+        this.mainEpgPopupVisible= false;
+        this.archEpgVisible= true;
+        this.archEpgPopupVisible= false;
+        this.infoBoxVisible= true;
         this.archEpg.loadEpg();
-        this.app.forceUpdate();
+        console.log("appState.showArchEpg");
     }
 
     closeArchEpg(){
         this.mainEpgVisible=true;
         this.archEpgVisible=false;
         setTimeout(()=>{$(this.mainEpg.focusedElement).focus() },1);
+        console.log("appState.closeArchEpg");
+    }
+
+    showMainEpg(){
+        this.mainEpgVisible = true;
+        this.mainEpgPopupVisible= false;
+        this.archEpgVisible= false;
+        this.archEpgPopupVisible= false;
+        this.infoBoxVisible= true;
+        console.log("appState.showMainEpg");
+    }
+
+    showVideo(){
+        this.mainEpgVisible = false;
+        this.mainEpgPopupVisible= false;
+        this.archEpgVisible= false;
+        this.archEpgPopupVisible= false;
+        this.infoBoxVisible= false;
+        //this.app.forceUpdate();
+        console.log("appState.showVideo");
     }
 }
 
