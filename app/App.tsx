@@ -11,6 +11,7 @@ import {ArchEpg} from "./ArchEpg";
 import {ArchEpgPopup} from "./ArchEpgPopup";
 import {Footer} from "./Footer";
 import {Rewinder} from "./Rewinder";
+import {Pauser} from "./Pauser";
 
 
 export interface IAppPage {
@@ -107,7 +108,7 @@ export class App extends React.Component<any, any> {
 
                 }
             }
-            if (appState.getGuiState() !== "mainEpg" && appState.getGuiState() !== "archEpg" && (e.keyCode === 38 || e.keyCode === 40 )) { //вверх вниз
+            if (appState.getGuiState() === "video" && (e.keyCode === 38 || e.keyCode === 40 )) { //вверх вниз
                 appState.showMainEpg(true);
             }
 
@@ -166,7 +167,9 @@ export class App extends React.Component<any, any> {
                 else if (appState.getGuiState() === "archEpg")
                     appState.archEpg.enterKeyPressed();
                 else if (appState.getGuiState() === "video")
-                    appState.showFooter();
+                    appState.showPauser();
+                else if (appState.getGuiState() === "pauser")
+                    appState.pauser.enterKeyPressed();
 
             }
             if (e.keyCode === 13) {
@@ -186,6 +189,8 @@ export class App extends React.Component<any, any> {
                 appState.archEpgPopup.backButtonPressed();
             if (appState.rewinder)
                 appState.rewinder.backButtonPressed();
+            if (appState.pauser)
+                appState.pauser.backButtonPressed();
         }, false);
 
 
@@ -211,7 +216,7 @@ export class App extends React.Component<any, any> {
                     <InfoBox/>
                     <Footer/>
                     <Rewinder/>
-
+                    <Pauser/>
                 </div>
             );
         }
@@ -226,47 +231,48 @@ export class App extends React.Component<any, any> {
                     <InfoBox/>
                     <Footer/>
                     <Rewinder/>
+                    <Pauser/>
 
 
-                    <button style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 100
-                    }} onClick={() => {
-                        console.log("Play");
-                        appState.nativePlayer.play()
-                    }}>Play
-                    </button>
-                    <button style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 10
-                    }} onClick={() => {
-                        console.log("пауза");
-                        appState.nativePlayer.pause()
-                    }}>Пауза
-                    </button>
-                    <button style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 200
-                    }} onClick={() => {
-                        console.log("минус минута");
-                        //var utc = ((new Date()).getTime()-50*60*1000).toString().substr(0, 10);
-                        var utc = ((new Date("2017-05-21 10:59:30")).getTime()).toString().substr(0, 10);
-                        var lutc = (new Date()).getTime().toString().substr(0, 10);
-                        //console.log("http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc);
-                        appState.nativePlayer.src = "http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc;
-                        appState.nativePlayer.play()
-                    }}>Минус минута
-                    </button>
-                    <span style={{
-                        color: "yellow",
-                        fontSize: 15,
-                        position: "absolute",
-                        top: 0,
-                        left: 400
-                    }} className="timer-str"></span>
+                    {/*<button style={{*/}
+                        {/*position: "absolute",*/}
+                        {/*top: 0,*/}
+                        {/*left: 100*/}
+                    {/*}} onClick={() => {*/}
+                        {/*console.log("Play");*/}
+                        {/*appState.nativePlayer.play()*/}
+                    {/*}}>Play*/}
+                    {/*</button>*/}
+                    {/*<button style={{*/}
+                        {/*position: "absolute",*/}
+                        {/*top: 0,*/}
+                        {/*left: 10*/}
+                    {/*}} onClick={() => {*/}
+                        {/*console.log("пауза");*/}
+                        {/*appState.nativePlayer.pause()*/}
+                    {/*}}>Пауза*/}
+                    {/*</button>*/}
+                    {/*<button style={{*/}
+                        {/*position: "absolute",*/}
+                        {/*top: 0,*/}
+                        {/*left: 200*/}
+                    {/*}} onClick={() => {*/}
+                        {/*console.log("минус минута");*/}
+                        {/*//var utc = ((new Date()).getTime()-50*60*1000).toString().substr(0, 10);*/}
+                        {/*var utc = ((new Date("2017-05-21 10:59:30")).getTime()).toString().substr(0, 10);*/}
+                        {/*var lutc = (new Date()).getTime().toString().substr(0, 10);*/}
+                        {/*//console.log("http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc);*/}
+                        {/*appState.nativePlayer.src = "http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc;*/}
+                        {/*appState.nativePlayer.play()*/}
+                    {/*}}>Минус минута*/}
+                    {/*</button>*/}
+                    {/*<span style={{*/}
+                        {/*color: "yellow",*/}
+                        {/*fontSize: 15,*/}
+                        {/*position: "absolute",*/}
+                        {/*top: 0,*/}
+                        {/*left: 400*/}
+                    {/*}} className="timer-str"></span>*/}
                 </div>
             );
         }

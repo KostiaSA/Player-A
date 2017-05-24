@@ -10,6 +10,7 @@ import {ArchEpg} from "./ArchEpg";
 import {ArchEpgPopup} from "./ArchEpgPopup";
 import {Footer} from "./Footer";
 import {Rewinder} from "./Rewinder";
+import {Pauser} from "./Pauser";
 
 
 export interface ChannelPlayState {
@@ -24,7 +25,15 @@ export interface ChannelPlayState {
     lastCurrentTime: Date;
 }
 
-export type GuiState = "video" | "mainEpg" | "mainEpgPopup" | "archEpg" | "archEpgPopup" | "footer" | "rewinder";
+export type GuiState =
+    "video"
+    | "mainEpg"
+    | "mainEpgPopup"
+    | "archEpg"
+    | "archEpgPopup"
+    | "footer"
+    | "rewinder"
+    | "pauser";
 
 export class AppState {
     loginOk: boolean;
@@ -47,6 +56,7 @@ export class AppState {
     infoBox: InfoBox;
     footer: Footer;
     rewinder: Rewinder;
+    pauser: Pauser;
 
     screenSize: { height: number, width: number };
 
@@ -61,6 +71,8 @@ export class AppState {
     @observable footerVisible: boolean = false;
     @observable rewinderVisible: boolean = false;
     @observable rewinderSecs: number = 0;
+
+    @observable pauserVisible: boolean = false;
 
     nativePlayer: HTMLVideoElement;
 
@@ -147,6 +159,7 @@ export class AppState {
     }
 
     showArchEpg() {
+        this.pauserVisible = false;
         this.rewinderVisible = false;
         this.footerVisible = false;
         this.mainEpgVisible = false;
@@ -159,6 +172,7 @@ export class AppState {
     }
 
     closeArchEpg() {
+        this.pauserVisible = false;
         this.mainEpgVisible = true;
         this.archEpgVisible = false;
         setTimeout(() => {
@@ -168,6 +182,7 @@ export class AppState {
     }
 
     showMainEpg(reload: boolean) {
+        this.pauserVisible = false;
         this.rewinderVisible = false;
         this.footerVisible = false;
         this.mainEpgVisible = true;
@@ -181,6 +196,7 @@ export class AppState {
     }
 
     showVideo() {
+        this.pauserVisible = false;
         this.rewinderVisible = false;
         this.footerVisible = false;
         this.mainEpgVisible = false;
@@ -193,6 +209,7 @@ export class AppState {
     }
 
     showFooter() {
+        this.pauserVisible = false;
         this.footerVisible = true;
         this.rewinderVisible = false;
         this.mainEpgVisible = false;
@@ -208,6 +225,7 @@ export class AppState {
     }
 
     showRewinder() {
+        this.pauserVisible = false;
         this.footerVisible = false;
         this.rewinderVisible = true;
         this.mainEpgVisible = false;
@@ -218,8 +236,26 @@ export class AppState {
         console.log("appState.showRewinder");
     }
 
+    showPauser() {
+        this.pauserVisible = true;
+        this.footerVisible = false;
+        this.rewinderVisible = false;
+        this.mainEpgVisible = false;
+        this.mainEpgPopupVisible = false;
+        this.archEpgVisible = false;
+        this.archEpgPopupVisible = false;
+        this.infoBoxVisible = false;
+        if (appState.nativePlayer) {
+            appState.nativePlayer.pause();
+        }
+
+        console.log("appState.showRewinder");
+    }
+
     getGuiState(): GuiState {
-        if (this.rewinderVisible)
+        if (this.pauserVisible)
+            return "pauser";
+        else if (this.rewinderVisible)
             return "rewinder";
         else if (this.mainEpgPopupVisible)
             return "mainEpgPopup";
@@ -263,6 +299,27 @@ export class AppState {
             return new Date();
         else
             return new Date(state.startTime.getTime() + state.currentTimeSec * 1000);
+    }
+
+    getPlayerPausedSecs(): number {
+        let state = this.channelPlayStates[this.playedChannel];
+        if (!state)
+            return 0;
+        else
+            return Math.round(((new Date()).getTime() - state.lastCurrentTime.getTime()) / 1000);
+    }
+
+    getPauserPos(): any {
+
+        let rewinderWidth = 170;
+        let rewinderHeight = 90;
+
+        return {
+            left: (screen.width - rewinderWidth) / 2,
+            top: (screen.height - rewinderHeight) / 2 - 10,
+            height: rewinderHeight,
+            width: rewinderWidth,
+        }
     }
 }
 
