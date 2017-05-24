@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {observable, autorun} from "mobx";
-import {appState} from "./AppState";
+import {appState, ChannelPlayState} from "./AppState";
 import {observer} from "mobx-react";
 import {MainVideo} from "./MainVideo";
 import {MainEpg} from "./MainEpg";
@@ -66,7 +66,23 @@ export class App extends React.Component<any, any> {
         // }, 2000);
 
         setTimeout(() => {
-            appState.nativePlayer.play();
+
+            appState.playedChannel = "РБК-ТВ";
+            let chState: ChannelPlayState = {
+                epgChannelName: appState.playedChannel,
+                epgTitle: "",
+                epgTime: "",
+                epgUrl: "http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8",
+                isArchive: false,
+                startTime: new Date(),
+                currentTimeSec: 0,
+                lastCurrentTime: new Date()
+            };
+            appState.channelPlayStates[appState.playedChannel] = chState;
+            if (appState.nativePlayer) {
+                appState.nativePlayer.src = "http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8";
+                appState.nativePlayer.play();
+            }
         }, 1000);
 
         window.addEventListener("resize", () => {
@@ -143,12 +159,13 @@ export class App extends React.Component<any, any> {
             //console.log("global keyup", e.keyCode);
 
             if (e.keyCode === 13 && this.enterKeyDownCounter === 1) {
-                if (appState.mainEpg)
+                if (appState.getGuiState() === "rewinder")
+                    appState.rewinder.enterKeyPressed();
+                else if (appState.getGuiState() === "mainEpg")
                     appState.mainEpg.enterKeyPressed();
-                if (appState.archEpg)
+                else if (appState.getGuiState() === "archEpg")
                     appState.archEpg.enterKeyPressed();
-
-                if (appState.getGuiState() === "video")
+                else if (appState.getGuiState() === "video")
                     appState.showFooter();
 
             }
@@ -167,6 +184,8 @@ export class App extends React.Component<any, any> {
                 appState.archEpg.backButtonPressed();
             if (appState.archEpgPopup)
                 appState.archEpgPopup.backButtonPressed();
+            if (appState.rewinder)
+                appState.rewinder.backButtonPressed();
         }, false);
 
 

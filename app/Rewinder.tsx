@@ -5,7 +5,7 @@ import {observable} from "mobx";
 import SyntheticEvent = React.SyntheticEvent;
 import CSSProperties = React.CSSProperties;
 import moment = require("moment");
-import {appState} from "./AppState";
+import {appState, ChannelPlayState} from "./AppState";
 import {KeyboardEvent} from "react";
 import {
     IEpg, IInfo, ILoadCurrentEpgAns, ILoadCurrentEpgReq, ILoadInfoAns, ILoadInfoReq, LOAD_CURRENT_EPG,
@@ -36,6 +36,38 @@ export class Rewinder extends React.Component<IRewinderProps, any> {
     componentDidMount() {
         appState.rewinder = this;
     };
+
+    backButtonPressed() {
+        if (appState.getGuiState() === "rewinder") {
+            appState.showVideo();
+        }
+    }
+
+    enterKeyPressed() {
+        if (appState.getGuiState() === "rewinder") {
+
+            let chState = appState.channelPlayStates[appState.playedChannel];
+
+            let toTime = new Date(appState.getActivePlayerTime().getTime() + appState.rewinderSecs * 1000);
+            let utc = moment(toTime).toDate().getTime().toString().substr(0, 10);
+
+            let lutc = (new Date()).getTime().toString().substr(0, 10);
+            let url = chState.epgUrl + "?utc=" + utc + "&lutc=" + lutc;
+
+            chState.isArchive = true;
+            chState.startTime = toTime;
+            chState.currentTimeSec = 0;
+            chState.lastCurrentTime = new Date();
+
+            if (appState.nativePlayer) {
+                appState.nativePlayer.src = url;
+                appState.nativePlayer.play();
+            }
+
+            appState.showVideo();
+
+        }
+    }
 
     info: IInfo;
 
@@ -95,8 +127,7 @@ export class Rewinder extends React.Component<IRewinderProps, any> {
         let sign = "";
         if (appState.rewinderSecs > 0)
             sign = "+ ";
-        else
-        if (appState.rewinderSecs < 0)
+        else if (appState.rewinderSecs < 0)
             sign = "- ";
 
         let secStr = "";
@@ -115,11 +146,16 @@ export class Rewinder extends React.Component<IRewinderProps, any> {
         }
 
 
+        let currDate = appState.getActivePlayerTime();
+
         return (
             <div style={style}>
                 <div>{sign}{secStr}</div>
                 <div
-                    style={{marginTop: 10}}>{moment(new Date((new Date()).getTime() + appState.rewinderSecs * 1000)).format("HH:mm:ss")}</div>
+                    style={{
+                        marginTop: 10,
+                        color: "#c7c7c7"
+                    }}>{moment(new Date(currDate.getTime() + appState.rewinderSecs * 1000)).format("dd HH:mm:ss")}</div>
             </div>
         );
     }

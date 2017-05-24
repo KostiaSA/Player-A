@@ -67,7 +67,12 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                     }}
 
                     onTimeUpdate={(e: any) => {
-                        console.log("onTimeUpdate", appState.nativePlayer.videoHeight,appState.nativePlayer.videoWidth,appState.nativePlayer.currentTime);
+                        console.log("onTimeUpdate", appState.nativePlayer.videoHeight, appState.nativePlayer.videoWidth, appState.nativePlayer.currentTime);
+                        let chState = appState.channelPlayStates[appState.playedChannel];
+                        if (!chState)
+                            alert("main-video: not chState!");
+                        chState.currentTimeSec = appState.nativePlayer.currentTime;
+                        chState.lastCurrentTime = new Date();
                     }}
 
                     ref={(e) => {
@@ -76,7 +81,6 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                     }}
                     style={style} width={screen.width} height={screen.height}>
                     <source
-                        src="http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8"
                         type="application/x-mpegURL"/>
                 </video>
             );

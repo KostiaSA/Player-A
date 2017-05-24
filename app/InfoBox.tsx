@@ -133,7 +133,7 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
                 <div style={style}>
                     <div style={{textAlign: "left", paddingTop: 5}}>
                         <img style={imgStyle}
-                             src={config.apiUrl.replace("api", "") + "kit/providers/tv.yandex.ru/images/" + this.info.image}/>
+                             src={config.apiUrl.replace("api", "") + "kit/providers/"+this.info.epgProvider+"/images/" + this.info.image}/>
                     </div>
                     <div style={{padding: 2, overflow: "hidden"}}>
                         <div style={{

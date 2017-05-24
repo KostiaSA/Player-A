@@ -137,13 +137,14 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
     enterKeyPressed() {
         if (appState.getGuiState() === "mainEpg") {
-            appState.showVideo();
 
             appState.playedChannel = this.focusedEpg!.channelTitle;
             let chState: ChannelPlayState = {
                 epgChannelName: appState.playedChannel,
                 epgTitle: this.focusedEpg!.title,
                 epgTime: this.focusedEpg!.time,
+                epgUrl: this.focusedEpg!.channelUrl,
+
                 isArchive: false,
                 startTime: new Date(),
                 currentTimeSec: 0,
@@ -151,8 +152,14 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
             };
             appState.channelPlayStates[appState.playedChannel] = chState;
 
-            appState.nativePlayer.src = this.focusedEpg!.channelUrl;
-            appState.nativePlayer.play();
+            console.log("mainEpg play -1");
+            if (appState.nativePlayer) {
+                console.log("mainEpg play 0");
+                appState.nativePlayer.src = this.focusedEpg!.channelUrl;
+                appState.nativePlayer.play();
+                console.log("mainEpg play", this.focusedEpg!.channelUrl)
+            }
+            appState.showVideo();
         }
     }
 

@@ -5,7 +5,7 @@ import {observable} from "mobx";
 import SyntheticEvent = React.SyntheticEvent;
 import CSSProperties = React.CSSProperties;
 import moment = require("moment");
-import {appState} from "./AppState";
+import {appState, ChannelPlayState} from "./AppState";
 import {KeyboardEvent} from "react";
 import {
     IEpg, ILoadArchEpgAns, ILoadArchEpgReq, ILoadCurrentEpgAns, ILoadCurrentEpgReq, LOAD_ARCH_EPG,
@@ -88,7 +88,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                     <td>
                         <div style={{height: 25, width: 50, textAlign: "right"}}>
                             <img style={imgStyle}
-                                 src={config.apiUrl.replace("api", "") + "kit/providers/tv.yandex.ru/images/" + this.props.data.image}/>
+                                 src={config.apiUrl.replace("api", "") + "kit/providers/"+this.props.data.epgProvider+"/images/" + this.props.data.image}/>
                         </div>
                     </td>
                     <td style={{width: "100%"}}>
@@ -150,24 +150,66 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
         if (appState.getGuiState() === "archEpg") {
 
             if (this.focusedEpg!.endtime < this.focusedEpg!.currtime) {
-                // архив
-                appState.archEpgVisible = false;
-                appState.mainEpgVisible = false;
-                appState.infoBoxVisible = false;
-                // "http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/106/index.m3u8?utc=1494406801&lutc=1494590932"
+
                 let utc = moment(this.focusedEpg!.time).add(3, "h").add(-1, "m").toDate().getTime().toString().substr(0, 10);
                 let lutc = (new Date()).getTime().toString().substr(0, 10);
-                console.log("appState.nativePlayer.src", appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc);
-                appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc;
-                appState.nativePlayer.play();
+                let url=appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc;
+                //appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc;
+
+                appState.playedChannel = this.focusedEpg!.channelTitle;
+                let chState: ChannelPlayState = {
+                    epgChannelName: appState.playedChannel,
+                    epgTitle: this.focusedEpg!.title,
+                    epgTime: this.focusedEpg!.time,
+                    epgUrl: appState.mainEpg.focusedEpg!.channelUrl,
+
+                    isArchive: true,
+                    startTime: moment(this.focusedEpg!.time).add(3, "h").toDate(),
+                    currentTimeSec: 0,
+                    lastCurrentTime: new Date()
+                };
+                appState.channelPlayStates[appState.playedChannel] = chState;
+
+                if (appState.nativePlayer) {
+                    appState.nativePlayer.src = url;
+                    appState.nativePlayer.play();
+                }
+
+                appState.showVideo();
+
+
+                // архив
+                // let utc = moment(this.focusedEpg!.time).add(3, "h").add(-1, "m").toDate().getTime().toString().substr(0, 10);
+                // let lutc = (new Date()).getTime().toString().substr(0, 10);
+                // console.log("appState.nativePlayer.src", appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc);
+                //
+                // appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc;
+                // appState.nativePlayer.play();
+                // appState.showVideo();
             }
             else if (this.focusedEpg!.time < this.focusedEpg!.currtime) {
                 // в эфире
-                appState.archEpgVisible = false;
-                appState.mainEpgVisible = false;
-                appState.infoBoxVisible = false;
-                appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl;
-                appState.nativePlayer.play();
+
+                appState.playedChannel = this.focusedEpg!.channelTitle;
+                let chState: ChannelPlayState = {
+                    epgChannelName: appState.playedChannel,
+                    epgTitle: this.focusedEpg!.title,
+                    epgTime: this.focusedEpg!.time,
+                    epgUrl: appState.mainEpg.focusedEpg!.channelUrl,
+
+                    isArchive: false,
+                    startTime: new Date(),
+                    currentTimeSec: 0,
+                    lastCurrentTime: new Date()
+                };
+                appState.channelPlayStates[appState.playedChannel] = chState;
+
+                if (appState.nativePlayer) {
+                    appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl;
+                    appState.nativePlayer.play();
+                }
+
+                appState.showVideo();
             }
             else {
                 // будет

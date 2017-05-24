@@ -51,6 +51,7 @@ export interface IEpg {
     director: string;
     actors: string;
     image: string;
+    epgProvider: string;
 }
 
 export interface IInfo {
@@ -67,6 +68,7 @@ export interface IInfo {
     director: string;
     actors: string;
     image: string;
+    epgProvider: string;
 }
 
 

@@ -16,6 +16,7 @@ export interface ChannelPlayState {
     epgChannelName: string;
     epgTitle: string;
     epgTime: string;
+    epgUrl: string;
 
     isArchive: boolean;
     startTime: Date;
@@ -245,15 +246,23 @@ export class AppState {
 
     getRewinderPos(): any {
 
-        let rewinderWidth = 200;
-        let rewinderHeight = 100;
+        let rewinderWidth = 170;
+        let rewinderHeight = 90;
 
         return {
             left: (screen.width - rewinderWidth) / 2,
-            top: (screen.height - rewinderHeight) / 2,
+            top: (screen.height - rewinderHeight) / 2 - 10,
             height: rewinderHeight,
             width: rewinderWidth,
         }
+    }
+
+    getActivePlayerTime(): Date {
+        let state = this.channelPlayStates[this.playedChannel];
+        if (!state)
+            return new Date();
+        else
+            return new Date(state.startTime.getTime() + state.currentTimeSec * 1000);
     }
 }
 
