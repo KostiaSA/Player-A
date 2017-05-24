@@ -9,6 +9,8 @@ import {InfoBox} from "./InfoBox";
 import {MainEpgPopup} from "./MainEpgPopup";
 import {ArchEpg} from "./ArchEpg";
 import {ArchEpgPopup} from "./ArchEpgPopup";
+import {Footer} from "./Footer";
+import {Rewinder} from "./Rewinder";
 
 
 export interface IAppPage {
@@ -57,7 +59,7 @@ export class App extends React.Component<any, any> {
 
 
     componentDidMount() {
-        appState.app=this;
+        appState.app = this;
         // setTimeout(() => {
         //     appState.mainEpgVisible = true;
         //     appState.infoBoxVisible = true;
@@ -89,22 +91,54 @@ export class App extends React.Component<any, any> {
 
                 }
             }
-            if (!appState.mainEpgVisible && !appState.archEpgVisible && (e.keyCode === 38 || e.keyCode === 40 )) { //вверх вниз
-                appState.mainEpgVisible = true;
-                appState.infoBoxVisible = true;
-                appState.mainEpg.loadEpg();
+            if (appState.getGuiState() !== "mainEpg" && appState.getGuiState() !== "archEpg" && (e.keyCode === 38 || e.keyCode === 40 )) { //вверх вниз
+                appState.showMainEpg(true);
             }
 
-            if (e.keyCode === 37 || e.keyCode === 39) {  // влево вправо
-                if (appState.mainEpgVisible && !appState.mainEpgPopupVisible)
+            if (e.keyCode === 37) {  // влево
+                if (appState.getGuiState() == "mainEpg") {
                     appState.showArchEpg();
+                }
+                else if (appState.getGuiState() == "video") {
+                    appState.showRewinder();
+                    appState.rewinderSecs = -15;
+                }
+                else if (appState.getGuiState() === "rewinder") {
+                    if (appState.rewinderSecs < 600)
+                        appState.rewinderSecs -= 15;
+                    else
+                        appState.rewinderSecs -= 60;
+                }
+            }
+
+            if (e.keyCode === 39) {  // вправо
+                if (appState.getGuiState() == "mainEpg") {
+                    if (appState.mainEpg)
+                        appState.mainEpg.popupKeyPressed();
+                }
+                else if (appState.getGuiState() == "archEpg") {
+                    if (appState.archEpg)
+                        appState.archEpg.popupKeyPressed();
+                }
+                if (appState.getGuiState() == "video") {
+                    appState.showRewinder();
+                    appState.rewinderSecs = 15;
+                }
+                else if (appState.getGuiState() === "rewinder") {
+                    if (appState.rewinderSecs < 600)
+                        appState.rewinderSecs += 15;
+                    else
+                        appState.rewinderSecs += 60;
+                }
             }
 
         }, false);
 
         document.addEventListener("keyup", (e: any) => {
 
-            if (appState.mainEpgPopupVisible)
+            if (appState.getGuiState() === "mainEpgPopup")
+                return;
+            if (appState.getGuiState() === "archEpgPopup")
                 return;
             //console.log("global keyup", e.keyCode);
 
@@ -113,6 +147,10 @@ export class App extends React.Component<any, any> {
                     appState.mainEpg.enterKeyPressed();
                 if (appState.archEpg)
                     appState.archEpg.enterKeyPressed();
+
+                if (appState.getGuiState() === "video")
+                    appState.showFooter();
+
             }
             if (e.keyCode === 13) {
                 this.enterKeyDownCounter = 0;
@@ -152,6 +190,8 @@ export class App extends React.Component<any, any> {
                     <ArchEpg/>
                     <ArchEpgPopup/>
                     <InfoBox/>
+                    <Footer/>
+                    <Rewinder/>
 
                 </div>
             );
@@ -165,11 +205,15 @@ export class App extends React.Component<any, any> {
                     <ArchEpg/>
                     <ArchEpgPopup/>
                     <InfoBox/>
+                    <Footer/>
+                    <Rewinder/>
+
+
                     <button style={{
                         position: "absolute",
                         top: 0,
                         left: 100
-                    }}onClick={() => {
+                    }} onClick={() => {
                         console.log("Play");
                         appState.nativePlayer.play()
                     }}>Play
@@ -183,6 +227,27 @@ export class App extends React.Component<any, any> {
                         appState.nativePlayer.pause()
                     }}>Пауза
                     </button>
+                    <button style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 200
+                    }} onClick={() => {
+                        console.log("минус минута");
+                        //var utc = ((new Date()).getTime()-50*60*1000).toString().substr(0, 10);
+                        var utc = ((new Date("2017-05-21 10:59:30")).getTime()).toString().substr(0, 10);
+                        var lutc = (new Date()).getTime().toString().substr(0, 10);
+                        //console.log("http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc);
+                        appState.nativePlayer.src = "http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc;
+                        appState.nativePlayer.play()
+                    }}>Минус минута
+                    </button>
+                    <span style={{
+                        color: "yellow",
+                        fontSize: 15,
+                        position: "absolute",
+                        top: 0,
+                        left: 400
+                    }} className="timer-str"></span>
                 </div>
             );
         }

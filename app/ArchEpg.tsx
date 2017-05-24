@@ -141,12 +141,13 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
     };
 
     backButtonPressed() {
-        if (appState.archEpgVisible)
+        if (appState.getGuiState() === "archEpg") {
             appState.closeArchEpg();
+        }
     }
 
     enterKeyPressed() {
-        if (appState.archEpgVisible && !appState.archEpgPopupVisible) {
+        if (appState.getGuiState() === "archEpg") {
 
             if (this.focusedEpg!.endtime < this.focusedEpg!.currtime) {
                 // архив
@@ -177,7 +178,7 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
     }
 
     popupKeyPressed() {
-        if (appState.archEpgVisible && !appState.archEpgPopupVisible) {
+        if (appState.getGuiState() === "archEpg") {
             appState.archEpgPopup.openPopup();
         }
     }

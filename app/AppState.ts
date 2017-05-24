@@ -8,7 +8,22 @@ import {InfoBox} from "./InfoBox";
 import {MainEpgPopup} from "./MainEpgPopup";
 import {ArchEpg} from "./ArchEpg";
 import {ArchEpgPopup} from "./ArchEpgPopup";
+import {Footer} from "./Footer";
+import {Rewinder} from "./Rewinder";
 
+
+export interface ChannelPlayState {
+    epgChannelName: string;
+    epgTitle: string;
+    epgTime: string;
+
+    isArchive: boolean;
+    startTime: Date;
+    currentTimeSec: number;
+    lastCurrentTime: Date;
+}
+
+export type GuiState = "video" | "mainEpg" | "mainEpgPopup" | "archEpg" | "archEpgPopup" | "footer" | "rewinder";
 
 export class AppState {
     loginOk: boolean;
@@ -18,6 +33,9 @@ export class AppState {
     encryptKey: string;
 
 
+    playedChannel: string;
+    channelPlayStates: { [epgChannelName: string]: ChannelPlayState; } = {};
+
     app: App;
     mainEpg: MainEpg;
     mainEpgPopup: MainEpgPopup;
@@ -26,6 +44,8 @@ export class AppState {
     archEpgPopup: ArchEpgPopup;
 
     infoBox: InfoBox;
+    footer: Footer;
+    rewinder: Rewinder;
 
     screenSize: { height: number, width: number };
 
@@ -36,6 +56,10 @@ export class AppState {
     @observable archEpgPopupVisible: boolean = false;
 
     @observable infoBoxVisible: boolean = false;
+
+    @observable footerVisible: boolean = false;
+    @observable rewinderVisible: boolean = false;
+    @observable rewinderSecs: number = 0;
 
     nativePlayer: HTMLVideoElement;
 
@@ -88,11 +112,11 @@ export class AppState {
     }
 
     getMenuHeight(): number {
-        return screen.height-(2*this.getMenuPadding());
+        return screen.height - (2 * this.getMenuPadding());
     }
 
     getMenuWidth(): number {
-        return screen.width-(2*this.getMenuPadding());
+        return screen.width - (2 * this.getMenuPadding());
     }
 
     getInfoBoxWidth(): number {
@@ -100,7 +124,7 @@ export class AppState {
     }
 
     getMainEpgWidth(): number {
-        return this.getMenuWidth()-this.getInfoBoxWidth();
+        return this.getMenuWidth() - this.getInfoBoxWidth();
     }
 
     getMainEpgPos(): any {
@@ -114,47 +138,122 @@ export class AppState {
 
     getInfoBoxPos(): any {
         return {
-            left: this.getMainEpgPos().left+this.getMainEpgPos().width,
+            left: this.getMainEpgPos().left + this.getMainEpgPos().width,
             top: this.getMenuPadding(),
             width: this.getInfoBoxWidth(),
             bottom: this.getMenuPadding(),
         }
     }
 
-    showArchEpg(){
+    showArchEpg() {
+        this.rewinderVisible = false;
+        this.footerVisible = false;
         this.mainEpgVisible = false;
-        this.mainEpgPopupVisible= false;
-        this.archEpgVisible= true;
-        this.archEpgPopupVisible= false;
-        this.infoBoxVisible= true;
+        this.mainEpgPopupVisible = false;
+        this.archEpgVisible = true;
+        this.archEpgPopupVisible = false;
+        this.infoBoxVisible = true;
         this.archEpg.loadEpg();
         console.log("appState.showArchEpg");
     }
 
-    closeArchEpg(){
-        this.mainEpgVisible=true;
-        this.archEpgVisible=false;
-        setTimeout(()=>{$(this.mainEpg.focusedElement).focus() },1);
+    closeArchEpg() {
+        this.mainEpgVisible = true;
+        this.archEpgVisible = false;
+        setTimeout(() => {
+            $(this.mainEpg.focusedElement).focus()
+        }, 1);
         console.log("appState.closeArchEpg");
     }
 
-    showMainEpg(){
+    showMainEpg(reload: boolean) {
+        this.rewinderVisible = false;
+        this.footerVisible = false;
         this.mainEpgVisible = true;
-        this.mainEpgPopupVisible= false;
-        this.archEpgVisible= false;
-        this.archEpgPopupVisible= false;
-        this.infoBoxVisible= true;
+        this.mainEpgPopupVisible = false;
+        this.archEpgVisible = false;
+        this.archEpgPopupVisible = false;
+        this.infoBoxVisible = true;
+        if (reload)
+            this.mainEpg.loadEpg();
         console.log("appState.showMainEpg");
     }
 
-    showVideo(){
+    showVideo() {
+        this.rewinderVisible = false;
+        this.footerVisible = false;
         this.mainEpgVisible = false;
-        this.mainEpgPopupVisible= false;
-        this.archEpgVisible= false;
-        this.archEpgPopupVisible= false;
-        this.infoBoxVisible= false;
+        this.mainEpgPopupVisible = false;
+        this.archEpgVisible = false;
+        this.archEpgPopupVisible = false;
+        this.infoBoxVisible = false;
         //this.app.forceUpdate();
         console.log("appState.showVideo");
+    }
+
+    showFooter() {
+        this.footerVisible = true;
+        this.rewinderVisible = false;
+        this.mainEpgVisible = false;
+        this.mainEpgPopupVisible = false;
+        this.archEpgVisible = false;
+        this.archEpgPopupVisible = false;
+        this.infoBoxVisible = false;
+
+        // todo не будет работать, если началась другая программа (надо проверку на окончание делать)
+        appState.footer.loadInfo(this.mainEpg.focusedEpg!.channelId, this.mainEpg.focusedEpg!.time);
+
+        console.log("appState.showFoooter");
+    }
+
+    showRewinder() {
+        this.footerVisible = false;
+        this.rewinderVisible = true;
+        this.mainEpgVisible = false;
+        this.mainEpgPopupVisible = false;
+        this.archEpgVisible = false;
+        this.archEpgPopupVisible = false;
+        this.infoBoxVisible = false;
+        console.log("appState.showRewinder");
+    }
+
+    getGuiState(): GuiState {
+        if (this.rewinderVisible)
+            return "rewinder";
+        else if (this.mainEpgPopupVisible)
+            return "mainEpgPopup";
+        else if (this.archEpgPopupVisible)
+            return "archEpgPopup";
+        else if (this.mainEpgVisible)
+            return "mainEpg";
+        else if (this.archEpgVisible)
+            return "archEpg";
+        else if (this.footerVisible)
+            return "footer";
+        else
+            return "video";
+    }
+
+    getFooterPos(): any {
+        return {
+            left: this.getMenuPadding(),
+            right: this.getMenuPadding(),
+            height: 150,
+            bottom: this.getMenuPadding(),
+        }
+    }
+
+    getRewinderPos(): any {
+
+        let rewinderWidth = 200;
+        let rewinderHeight = 100;
+
+        return {
+            left: (screen.width - rewinderWidth) / 2,
+            top: (screen.height - rewinderHeight) / 2,
+            height: rewinderHeight,
+            width: rewinderWidth,
+        }
     }
 }
 

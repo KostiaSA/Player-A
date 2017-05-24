@@ -45,8 +45,7 @@ export class MainVideo extends React.Component<IMainVideoProps, any> {
                 <div
                     className="main-video"
                     onClick={() => {
-                        appState.showMainEpg();
-                        appState.mainEpg.loadEpg();
+                        appState.showMainEpg(true);
                     }}
 
                     ref={(e) => {

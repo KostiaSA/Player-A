@@ -5,7 +5,7 @@ import {observable} from "mobx";
 import SyntheticEvent = React.SyntheticEvent;
 import CSSProperties = React.CSSProperties;
 import moment = require("moment");
-import {appState} from "./AppState";
+import {appState, ChannelPlayState} from "./AppState";
 import {KeyboardEvent} from "react";
 import {IEpg, ILoadCurrentEpgAns, ILoadCurrentEpgReq, LOAD_CURRENT_EPG} from "./api/api";
 import {httpRequest} from "./utils/httpRequest";
@@ -126,7 +126,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
     };
 
     backButtonPressed() {
-        if (appState.mainEpgVisible && !appState.mainEpgPopupVisible) {
+        if (appState.getGuiState() === "mainEpg") {
             appState.showVideo();
             //appState.mainEpgVisible = false;
             //appState.infoBoxVisible = false;
@@ -136,15 +136,28 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
     }
 
     enterKeyPressed() {
-        if (appState.mainEpgVisible && !appState.mainEpgPopupVisible) {
+        if (appState.getGuiState() === "mainEpg") {
             appState.showVideo();
+
+            appState.playedChannel = this.focusedEpg!.channelTitle;
+            let chState: ChannelPlayState = {
+                epgChannelName: appState.playedChannel,
+                epgTitle: this.focusedEpg!.title,
+                epgTime: this.focusedEpg!.time,
+                isArchive: false,
+                startTime: new Date(),
+                currentTimeSec: 0,
+                lastCurrentTime: new Date()
+            };
+            appState.channelPlayStates[appState.playedChannel] = chState;
+
             appState.nativePlayer.src = this.focusedEpg!.channelUrl;
             appState.nativePlayer.play();
         }
     }
 
     popupKeyPressed() {
-        if (appState.mainEpgVisible && !appState.mainEpgPopupVisible) {
+        if (appState.getGuiState() === "mainEpg") {
             appState.mainEpgPopup.openPopup();
         }
     }
@@ -309,13 +322,13 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                     }}>каналы: {this.category.toLocaleUpperCase()}</span>
 
                     {/*<button onClick={() => {*/}
-                        {/*console.log("пауза");*/}
-                        {/*appState.nativePlayer.pause()*/}
+                    {/*console.log("пауза");*/}
+                    {/*appState.nativePlayer.pause()*/}
                     {/*}}>Пауза*/}
                     {/*</button>*/}
                     {/*<button onClick={() => {*/}
-                        {/*console.log("Play");*/}
-                        {/*appState.nativePlayer.play()*/}
+                    {/*console.log("Play");*/}
+                    {/*appState.nativePlayer.play()*/}
                     {/*}}>Play*/}
                     {/*</button>*/}
                     {/*<button onClick={() => {*/}

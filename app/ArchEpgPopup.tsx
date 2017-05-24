@@ -42,7 +42,7 @@ export class ArchEpgPopup extends React.Component<IArchEpgPopupProps, any> {
 
 
     backButtonPressed() {
-        if (appState.archEpgPopupVisible) {
+        if (appState.getGuiState()==="archEpgPopup") {
             this.closePopup();
         }
     }
