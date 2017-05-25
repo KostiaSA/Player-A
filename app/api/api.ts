@@ -117,3 +117,25 @@ export interface ILoadArchEpgReq extends IReq {
 export interface ILoadArchEpgAns extends IAns {
     epg: IEpg[];
 }
+
+export const GET_PLAYLIST = "105";
+
+export interface IGetPlayListReq extends IReq {
+    login: string;
+    password: string;
+}
+
+export interface IGetPlayListAns extends IAns {
+    playList:string;
+}
+
+export const SET_PLAYLIST = "106";
+
+export interface ISetPlayListReq extends IReq {
+    login: string;
+    password: string;
+    playList:string;
+}
+
+export interface ISetPlayListAns extends IAns {
+}
