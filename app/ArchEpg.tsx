@@ -42,7 +42,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
 
         let genreSpan: any = null;
         if (this.props.data.genreTitle)
-            genreSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{this.props.data.genreTitle+", "}</span>;
+            genreSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{this.props.data.genreTitle + ", "}</span>;
 
         let countrySpan: any = null;
         if (this.props.data.country && this.props.data.country !== "")
@@ -56,11 +56,12 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
         let directorSpan: any = null;
         if (this.props.data.director && this.props.data.director !== "")
             directorSpan =
-                <span style={{fontSize: 13, color: "#a2a2a2"}}>{"реж.: " + this.props.data.director+ ", "}</span>;
+                <span style={{fontSize: 13, color: "#a2a2a2"}}>{"реж.: " + this.props.data.director + ", "}</span>;
 
         let actorsSpan: any = null;
         if (this.props.data.actors && this.props.data.actors !== "")
-            actorsSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{"в ролях: " + this.props.data.actors+ ", "}</span>;
+            actorsSpan =
+                <span style={{fontSize: 13, color: "#a2a2a2"}}>{"в ролях: " + this.props.data.actors + ", "}</span>;
 
         let testSpan: any = null;
         //testSpan=<span>{this.props.data.time.toString()} - {this.props.data.endtime.toString()}</span>;
@@ -397,16 +398,12 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
 
         let headerHeight = 25;
 
+        let channelTitle = "";
+        if (appState.mainEpg && appState.mainEpg.focusedEpg)
+            channelTitle = appState.mainEpg.focusedEpg.channelTitle;
+
         return (
             <div
-                onKeyPress={(e: KeyboardEvent<any>) => {
-                    console.log("keyCode=", e.keyCode);
-                    //this.text += "  " + e.keyCode + " " + e.key;
-                }}
-                onKeyDown={(e: KeyboardEvent<any>) => {
-                    console.log("keyDown=", e.keyCode);
-                    //this.text += "  " + e.keyCode + " " + e.key;
-                }}
                 style={style}>
                 <div style={{height: headerHeight}}>
                     <span className="timer-str" style={{fontSize: 16, color: "darkturquoise", padding: 3}}></span>
@@ -415,7 +412,10 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                         color: "white",
                         padding: 3,
                         float: "right"
-                    }}>каналы: {this.category.toLocaleUpperCase()}</span>
+                    }}>{<span style={{
+                        marginRight: 5,
+                        color: "#FFC107"
+                    }}>{channelTitle}</span>}:{this.category.toLocaleUpperCase()}</span>
 
                 </div>
                 <div id="archepggrid"
