@@ -253,43 +253,62 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
             .then((ans: any) => {
                 console.log("loadEpg", ans.epg[0]);
 
-                if (!this.epg || this.epg.length !== ans.epg.length) {
-                    this.epg = ans.epg;
-                    this.comboGridApi.setRowData(this.epg);
-                }
-                else {
-                    let index = 0;
-                    this.comboGridApi.forEachNode(function (node: any) {
-                        node.data = ans.epg[index];
-                        index++;
-                    });
-                    this.comboGridApi.refreshView();
-                }
+                this.epg = ans.epg;
+                this.comboGridApi.setRowData(this.epg);
 
-                if (!this.focusedTime) {
-                    this.comboGridApi.ensureIndexVisible(0);
-                    this.comboGridApi.setFocusedCell(0, "col0");
-                    console.log("setFocusedCell(0)");
-                }
-                else {
-                    let index = 0;
-                    for (let item of this.epg) {
-                        if (item.time <= this.focusedTime && item.endtime >= this.focusedTime) {
-
-                            if (!this.isTimeVisible(this.focusedTime)) {
-                                this.comboGridApi.ensureIndexVisible(this.epg.length - 1);
-                                this.comboGridApi.ensureIndexVisible(index);
-                                this.comboGridApi.setFocusedCell(index, "col0");
-                            }
-                            else
-                                this.comboGridApi.setFocusedCell(index, "col0");
-
-                            break;
-                        }
-                        else
-                            index++;
+                let index = 0;
+                for (let item of this.epg) {
+                    if (item.endtime > item.currtime && item.time < item.currtime) {
+                        this.focusedTime = item.time;
+                        console.log("this.focusedTime", item.time);
+                        this.comboGridApi.ensureIndexVisible(this.epg.length - 1);
+                        this.comboGridApi.ensureIndexVisible(index);
+                        this.comboGridApi.setFocusedCell(index, "col0");
+                        break;
                     }
+                    else
+                        index++;
                 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+//                 if (!this.epg || this.epg.length !== ans.epg.length) {
+//                     this.epg = ans.epg;
+//                     this.comboGridApi.setRowData(this.epg);
+//                 }
+//                 else {
+//                     let index = 0;
+//                     this.comboGridApi.forEachNode(function (node: any) {
+//                         node.data = ans.epg[index];
+//                         index++;
+//                     });
+//                     this.comboGridApi.refreshView();
+//                 }
+//
+//                 if (!this.focusedTime) {
+//                     this.comboGridApi.ensureIndexVisible(0);
+//                     this.comboGridApi.setFocusedCell(0, "col0");
+//                     console.log("setFocusedCell(0)");
+//                 }
+//                 else {
+//                     let index = 0;
+//                     for (let item of this.epg) {
+//                         if (item.time <= this.focusedTime && item.endtime >= this.focusedTime) {
+//
+//                             if (!this.isTimeVisible(this.focusedTime)) {
+//                                 this.comboGridApi.ensureIndexVisible(this.epg.length - 1);
+//                                 this.comboGridApi.ensureIndexVisible(index);
+//                                 this.comboGridApi.setFocusedCell(index, "col0");
+//                             }
+//                             else
+//                                 this.comboGridApi.setFocusedCell(index, "col0");
+//
+//                             break;
+//                         }
+//                         else
+//                             index++;
+//                     }
+//                 }
+///////////////////////////////////////////////////////////////////////////////////////////////
                 appState.waitCoverVisible = false;
 
             })
@@ -360,8 +379,8 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
             columnDefs: cols,
             suppressColumnVirtualisation: true,
             enableSorting: false,
-            suppressLoadingOverlay:true,
-            suppressNoRowsOverlay:true,
+            suppressLoadingOverlay: true,
+            suppressNoRowsOverlay: true,
 
             // onGridReady: () => {
             //     //console.log("grid ready");

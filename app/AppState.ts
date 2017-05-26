@@ -69,8 +69,10 @@ export class AppState {
     @observable infoBoxVisible: boolean = false;
 
     @observable footerVisible: boolean = false;
+
     @observable rewinderVisible: boolean = false;
     @observable rewinderSecs: number = 0;
+    @observable rewinderLastUpdateTime: Date = new Date();
 
     @observable pauserVisible: boolean = false;
     @observable waitCoverVisible: boolean = false;

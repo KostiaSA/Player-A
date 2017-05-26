@@ -133,12 +133,14 @@ export class App extends React.Component<any, any> {
                 else if (appState.getGuiState() == "video") {
                     appState.showRewinder();
                     appState.rewinderSecs = -15;
+                    appState.rewinderLastUpdateTime = new Date();
                 }
                 else if (appState.getGuiState() === "rewinder") {
                     if (appState.rewinderSecs < 600)
                         appState.rewinderSecs -= 15;
                     else
                         appState.rewinderSecs -= 60;
+                    appState.rewinderLastUpdateTime = new Date();
                 }
             }
 
@@ -154,12 +156,14 @@ export class App extends React.Component<any, any> {
                 if (appState.getGuiState() == "video") {
                     appState.showRewinder();
                     appState.rewinderSecs = 15;
+                    appState.rewinderLastUpdateTime = new Date();
                 }
                 else if (appState.getGuiState() === "rewinder") {
                     if (appState.rewinderSecs < 600)
                         appState.rewinderSecs += 15;
                     else
                         appState.rewinderSecs += 60;
+                    appState.rewinderLastUpdateTime = new Date();
                 }
             }
 
@@ -232,18 +236,18 @@ export class App extends React.Component<any, any> {
                     <Rewinder/>
                     <Pauser/>
                     {/*<div style={{*/}
-                        {/*display: appState.waitCoverVisible ? "block" : "none",*/}
-                        {/*position: "relative",*/}
-                        {/*width: 960,*/}
-                        {/*height: 540,*/}
-                        {/*opacity: 0.4,*/}
-                        {/*backgroundColor:"white"*/}
+                    {/*display: appState.waitCoverVisible ? "block" : "none",*/}
+                    {/*position: "relative",*/}
+                    {/*width: 960,*/}
+                    {/*height: 540,*/}
+                    {/*opacity: 0.4,*/}
+                    {/*backgroundColor:"white"*/}
                     {/*}}></div>*/}
                     <img style={{
                         display: appState.waitCoverVisible ? "block" : "none",
                         position: "absolute",
-                        left: 960/2,
-                        top: 540/2-20,
+                        left: 960 / 2,
+                        top: 540 / 2 - 20,
                     }}
                          src="img/ajax-loader.gif"
                     ></img>
@@ -266,8 +270,8 @@ export class App extends React.Component<any, any> {
                     <img style={{
                         display: appState.waitCoverVisible ? "block" : "none",
                         position: "absolute",
-                        left: screen.width/2,
-                        top: screen.height/2-20,
+                        left: screen.width / 2,
+                        top: screen.height / 2 - 20,
                     }}
                          src="img/ajax-loader.gif"
                     ></img>

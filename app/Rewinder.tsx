@@ -35,6 +35,15 @@ export class Rewinder extends React.Component<IRewinderProps, any> {
 
     componentDidMount() {
         appState.rewinder = this;
+
+        setInterval(() => {
+            if (appState.getGuiState() === "rewinder") {
+                if ((new Date()).getTime() - appState.rewinderLastUpdateTime.getTime() > 1000) {
+                    this.backButtonPressed();
+                }
+            }
+        }, 200);
+
     };
 
     backButtonPressed() {
