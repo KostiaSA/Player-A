@@ -10,8 +10,8 @@ let developDir: IConfig = {
 
 let cloudDir: IConfig = {
     appName: "EdemTV Player",
-    apiUrl: "http://81.177.142.4/api",
+    apiUrl: "http://player.buhta.ru/api",
 }
 
 
-export let config: IConfig = cloudDir;
+export let config: IConfig = developDir;

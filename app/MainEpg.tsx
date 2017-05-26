@@ -75,6 +75,10 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                     <td style={{width: "100%"}}>
                         <div style={{padding: 2, height: 23}}>
                             {testSpan}
+                            <span style={{
+                                marginRight: 5,
+                                color: "darkturquoise"
+                            }}>{moment(this.props.data.time).add(3, "h").format("HH:mm")}</span>
                             <span style={{marginRight: 5, color: "#FFC107"}}>{this.props.data.channelTitle}</span>
                             <span style={{color: "white", marginRight: 5}}>{this.props.data.title}</span>
                             {genreSpan}
@@ -181,6 +185,10 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
 
     async loadEpg() {
+
+        appState.waitCoverVisible = true;
+
+
         await appState.doLogin();
 
 
@@ -191,11 +199,14 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
             category: this.category
         };
 
+        console.log("loadEpg---------------------------- 0");
         httpRequest<ILoadCurrentEpgReq, ILoadCurrentEpgAns>(req)
             .then((ans: any) => {
+                appState.waitCoverVisible = false;
                 console.log("loadEpg", ans.epg[0]);
 
                 if (!this.epg || this.epg.length !== ans.epg.length) {
+                    this.focusedChannelId = -1;
                     this.epg = ans.epg;
                     this.comboGridApi.setRowData(this.epg);
                 }
@@ -214,6 +225,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                     console.log("setFocusedCell(0)");
                 }
                 else {
+                    console.log("loadEpg---------------------------- 1");
                     let index = 0;
                     for (let item of this.epg) {
                         if (item.channelId === this.focusedChannelId) {
@@ -231,10 +243,13 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                         else
                             index++;
                     }
+                    console.log("loadEpg---------------------------- 2");
                 }
+
             })
             .catch((err: any) => {
-                alert(err);
+                appState.waitCoverVisible = false;
+                console.error(err);
             });
 
 
@@ -299,7 +314,10 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
             headerHeight: 0,
             columnDefs: cols,
             suppressColumnVirtualisation: true,
+            suppressLoadingOverlay:true,
+            suppressNoRowsOverlay:true,
             enableSorting: false,
+            showLoadingOverlay:false
             // onGridReady: () => {
             //     //console.log("grid ready");
             //     this.opt.columnApi.autoSizeColumns(this.tabloColumns);
@@ -390,8 +408,8 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                                 this.focusedChannelId = this.focusedEpg.channelId;
                                 appState.infoBox.loadInfo(this.focusedEpg.channelId, this.focusedEpg.time);
                             }
-                            else
-                                alert("focusedEpg?");
+                            // else
+                            //     alert("focusedEpg?");
 
                         }}
 

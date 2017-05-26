@@ -94,6 +94,20 @@ export class App extends React.Component<any, any> {
 
         document.addEventListener("keydown", (e: any) => {
             console.log("global keydown", e.keyCode);
+            if (e.keyCode === 27) {
+                if (appState.mainEpg)
+                    appState.mainEpg.backButtonPressed();
+                if (appState.mainEpgPopup)
+                    appState.mainEpgPopup.backButtonPressed();
+                if (appState.archEpg)
+                    appState.archEpg.backButtonPressed();
+                if (appState.archEpgPopup)
+                    appState.archEpgPopup.backButtonPressed();
+                if (appState.rewinder)
+                    appState.rewinder.backButtonPressed();
+                if (appState.pauser)
+                    appState.pauser.backButtonPressed();
+            }
             if (e.keyCode === 13) {
                 this.enterKeyDownCounter++;
                 //console.log("enterKeyDownCounter", this.enterKeyDownCounter);
@@ -217,6 +231,23 @@ export class App extends React.Component<any, any> {
                     <Footer/>
                     <Rewinder/>
                     <Pauser/>
+                    {/*<div style={{*/}
+                        {/*display: appState.waitCoverVisible ? "block" : "none",*/}
+                        {/*position: "relative",*/}
+                        {/*width: 960,*/}
+                        {/*height: 540,*/}
+                        {/*opacity: 0.4,*/}
+                        {/*backgroundColor:"white"*/}
+                    {/*}}></div>*/}
+                    <img style={{
+                        display: appState.waitCoverVisible ? "block" : "none",
+                        position: "absolute",
+                        left: 960/2,
+                        top: 540/2-20,
+                    }}
+                         src="img/ajax-loader.gif"
+                    ></img>
+
                 </div>
             );
         }
@@ -232,46 +263,54 @@ export class App extends React.Component<any, any> {
                     <Footer/>
                     <Rewinder/>
                     <Pauser/>
+                    <img style={{
+                        display: appState.waitCoverVisible ? "block" : "none",
+                        position: "absolute",
+                        left: screen.width/2,
+                        top: screen.height/2-20,
+                    }}
+                         src="img/ajax-loader.gif"
+                    ></img>
 
 
                     {/*<button style={{*/}
-                        {/*position: "absolute",*/}
-                        {/*top: 0,*/}
-                        {/*left: 100*/}
+                    {/*position: "absolute",*/}
+                    {/*top: 0,*/}
+                    {/*left: 100*/}
                     {/*}} onClick={() => {*/}
-                        {/*console.log("Play");*/}
-                        {/*appState.nativePlayer.play()*/}
+                    {/*console.log("Play");*/}
+                    {/*appState.nativePlayer.play()*/}
                     {/*}}>Play*/}
                     {/*</button>*/}
                     {/*<button style={{*/}
-                        {/*position: "absolute",*/}
-                        {/*top: 0,*/}
-                        {/*left: 10*/}
+                    {/*position: "absolute",*/}
+                    {/*top: 0,*/}
+                    {/*left: 10*/}
                     {/*}} onClick={() => {*/}
-                        {/*console.log("пауза");*/}
-                        {/*appState.nativePlayer.pause()*/}
+                    {/*console.log("пауза");*/}
+                    {/*appState.nativePlayer.pause()*/}
                     {/*}}>Пауза*/}
                     {/*</button>*/}
                     {/*<button style={{*/}
-                        {/*position: "absolute",*/}
-                        {/*top: 0,*/}
-                        {/*left: 200*/}
+                    {/*position: "absolute",*/}
+                    {/*top: 0,*/}
+                    {/*left: 200*/}
                     {/*}} onClick={() => {*/}
-                        {/*console.log("минус минута");*/}
-                        {/*//var utc = ((new Date()).getTime()-50*60*1000).toString().substr(0, 10);*/}
-                        {/*var utc = ((new Date("2017-05-21 10:59:30")).getTime()).toString().substr(0, 10);*/}
-                        {/*var lutc = (new Date()).getTime().toString().substr(0, 10);*/}
-                        {/*//console.log("http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc);*/}
-                        {/*appState.nativePlayer.src = "http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc;*/}
-                        {/*appState.nativePlayer.play()*/}
+                    {/*console.log("минус минута");*/}
+                    {/*//var utc = ((new Date()).getTime()-50*60*1000).toString().substr(0, 10);*/}
+                    {/*var utc = ((new Date("2017-05-21 10:59:30")).getTime()).toString().substr(0, 10);*/}
+                    {/*var lutc = (new Date()).getTime().toString().substr(0, 10);*/}
+                    {/*//console.log("http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc);*/}
+                    {/*appState.nativePlayer.src = "http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8" + "?utc=" + utc + "&lutc=" + lutc;*/}
+                    {/*appState.nativePlayer.play()*/}
                     {/*}}>Минус минута*/}
                     {/*</button>*/}
                     {/*<span style={{*/}
-                        {/*color: "yellow",*/}
-                        {/*fontSize: 15,*/}
-                        {/*position: "absolute",*/}
-                        {/*top: 0,*/}
-                        {/*left: 400*/}
+                    {/*color: "yellow",*/}
+                    {/*fontSize: 15,*/}
+                    {/*position: "absolute",*/}
+                    {/*top: 0,*/}
+                    {/*left: 400*/}
                     {/*}} className="timer-str"></span>*/}
                 </div>
             );

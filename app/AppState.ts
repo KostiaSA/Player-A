@@ -73,6 +73,7 @@ export class AppState {
     @observable rewinderSecs: number = 0;
 
     @observable pauserVisible: boolean = false;
+    @observable waitCoverVisible: boolean = false;
 
     nativePlayer: HTMLVideoElement;
 

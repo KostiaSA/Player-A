@@ -16,7 +16,9 @@ export function httpRequest<TReq extends IReq, TAns extends IAns>(req: TReq): Pr
             xhr.setRequestHeader('Content-type', "application/json;charset=UTF-8");
 
             xhr.onload = function () {
+                //console.log("httpRequest ---------------------- GET");
                 let ansBody = JSON.parse((this as XMLHttpRequest).responseText) as TAns;
+                //console.log("httpRequest ---------------------- PARSE");
                 if (ansBody.error)
                     reject(ansBody.error);
                 else {
@@ -38,6 +40,7 @@ export function httpRequest<TReq extends IReq, TAns extends IAns>(req: TReq): Pr
                 body: bodyEncrypted
             };
 
+            //console.log("httpRequest ---------------------- SEND");
             xhr.send(JSON.stringify(fullReq));
 
         });

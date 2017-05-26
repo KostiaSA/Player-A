@@ -78,7 +78,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
         }
         else {
             timeColor = "yellowgreen"; // будет
-            state = "будет";
+            state = "скоро";
         }
 
 
@@ -88,7 +88,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                     <td>
                         <div style={{height: 25, width: 50, textAlign: "right"}}>
                             <img style={imgStyle}
-                                 src={config.apiUrl.replace("api", "") + "kit/providers/"+this.props.data.epgProvider+"/images/" + this.props.data.image}/>
+                                 src={config.apiUrl.replace("api", "") + "kit/providers/" + this.props.data.epgProvider + "/images/" + this.props.data.image}/>
                         </div>
                     </td>
                     <td style={{width: "100%"}}>
@@ -153,7 +153,7 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
 
                 let utc = moment(this.focusedEpg!.time).add(3, "h").add(-1, "m").toDate().getTime().toString().substr(0, 10);
                 let lutc = (new Date()).getTime().toString().substr(0, 10);
-                let url=appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc;
+                let url = appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc;
                 //appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl + "?utc=" + utc + "&lutc=" + lutc;
 
                 appState.playedChannel = this.focusedEpg!.channelTitle;
@@ -237,6 +237,8 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
 
 
     async loadEpg() {
+        appState.waitCoverVisible = true;
+
         await appState.doLogin();
 
 
@@ -288,9 +290,12 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                             index++;
                     }
                 }
+                appState.waitCoverVisible = false;
+
             })
             .catch((err: any) => {
-                alert(err);
+                appState.waitCoverVisible = false;
+                console.log(err);
             });
 
 
@@ -355,6 +360,9 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
             columnDefs: cols,
             suppressColumnVirtualisation: true,
             enableSorting: false,
+            suppressLoadingOverlay:true,
+            suppressNoRowsOverlay:true,
+
             // onGridReady: () => {
             //     //console.log("grid ready");
             //     this.opt.columnApi.autoSizeColumns(this.tabloColumns);
