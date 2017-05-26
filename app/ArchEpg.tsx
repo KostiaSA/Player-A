@@ -28,6 +28,7 @@ export interface IMainEpgProps {
 class AgGrid_CellRenderer extends React.Component<any, any> {
 //<img src={"kit/providers/"+this.props.data.channelImage}/>
     render() {
+        appState.preprocessEpgInfo(this.props.data);
 
         let imgStyle: CSSProperties = {
             display: "inline-block",
@@ -41,20 +42,25 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
 
         let genreSpan: any = null;
         if (this.props.data.genreTitle)
-            genreSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{this.props.data.genreTitle}</span>;
+            genreSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{this.props.data.genreTitle+", "}</span>;
+
+        let countrySpan: any = null;
+        if (this.props.data.country && this.props.data.country !== "")
+            countrySpan = <span style={{fontSize: 13, color: yearColor}}>{this.props.data.country + ", "}</span>;
+
 
         let yearSpan: any = null;
         if (this.props.data.year && this.props.data.year > 0)
-            yearSpan = <span style={{fontSize: 13, color: yearColor}}>{", " + this.props.data.year + " г."}</span>;
+            yearSpan = <span style={{fontSize: 13, color: yearColor}}>{this.props.data.year + " г., "}</span>;
 
         let directorSpan: any = null;
         if (this.props.data.director && this.props.data.director !== "")
             directorSpan =
-                <span style={{fontSize: 13, color: "#a2a2a2"}}>{", реж.: " + this.props.data.director}</span>;
+                <span style={{fontSize: 13, color: "#a2a2a2"}}>{"реж.: " + this.props.data.director+ ", "}</span>;
 
         let actorsSpan: any = null;
         if (this.props.data.actors && this.props.data.actors !== "")
-            actorsSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{", в ролях: " + this.props.data.actors}</span>;
+            actorsSpan = <span style={{fontSize: 13, color: "#a2a2a2"}}>{"в ролях: " + this.props.data.actors+ ", "}</span>;
 
         let testSpan: any = null;
         //testSpan=<span>{this.props.data.time.toString()} - {this.props.data.endtime.toString()}</span>;
@@ -105,6 +111,7 @@ class AgGrid_CellRenderer extends React.Component<any, any> {
                             }}>{moment(this.props.data.time).add(3, "h").format("HH:mm")}</span>
                             <span style={{color: "white", marginRight: 5}}>{this.props.data.title}</span>
                             {genreSpan}
+                            {countrySpan}
                             {yearSpan}
                             {directorSpan}
                             {actorsSpan}

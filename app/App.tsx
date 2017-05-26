@@ -12,6 +12,7 @@ import {ArchEpgPopup} from "./ArchEpgPopup";
 import {Footer} from "./Footer";
 import {Rewinder} from "./Rewinder";
 import {Pauser} from "./Pauser";
+import {WelcomePage} from "./WelcomePage";
 
 
 export interface IAppPage {
@@ -60,11 +61,32 @@ export class App extends React.Component<any, any> {
 
 
     componentDidMount() {
+        setTimeout(() => {
+            appState.doLogin();
+        }, 1000);
+
+        setInterval(() => {
+            if (appState.emptyPlayList) {
+                appState.getPlaylistOk().then((playList: boolean) => {
+                    if (playList) {
+                        appState.starting = false;
+                        appState.loginOk = true;
+                        appState.emptyPlayList = false;
+                        appState.showMainEpg(true);
+                        console.log("loginOk");
+                    }
+                    else {
+                        appState.starting = false;
+                        appState.loginOk = false;
+                        appState.emptyPlayList = true;
+                        console.log("loginOk, плейлист пустой");
+
+                    }
+                });
+            }
+        }, 5000);
+
         appState.app = this;
-        // setTimeout(() => {
-        //     appState.mainEpgVisible = true;
-        //     appState.infoBoxVisible = true;
-        // }, 2000);
 
         setTimeout(() => {
 
@@ -73,7 +95,7 @@ export class App extends React.Component<any, any> {
                 epgChannelName: appState.playedChannel,
                 epgTitle: "",
                 epgTime: "",
-                epgUrl: "http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8",
+                epgUrl: "",//http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8",
                 isArchive: false,
                 startTime: new Date(),
                 currentTimeSec: 0,
@@ -81,8 +103,8 @@ export class App extends React.Component<any, any> {
             };
             appState.channelPlayStates[appState.playedChannel] = chState;
             if (appState.nativePlayer) {
-                appState.nativePlayer.src = "http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8";
-                appState.nativePlayer.play();
+                appState.nativePlayer.src = "",//http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8";
+                    appState.nativePlayer.play();
             }
         }, 1000);
 
@@ -235,6 +257,8 @@ export class App extends React.Component<any, any> {
                     <Footer/>
                     <Rewinder/>
                     <Pauser/>
+                    <WelcomePage/>
+
                     {/*<div style={{*/}
                     {/*display: appState.waitCoverVisible ? "block" : "none",*/}
                     {/*position: "relative",*/}
@@ -267,6 +291,7 @@ export class App extends React.Component<any, any> {
                     <Footer/>
                     <Rewinder/>
                     <Pauser/>
+                    <WelcomePage/>
                     <img style={{
                         display: appState.waitCoverVisible ? "block" : "none",
                         position: "absolute",

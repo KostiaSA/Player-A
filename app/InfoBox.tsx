@@ -83,6 +83,7 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
     // http://kostiasa.iptvbot.biz/iptv/ZPM92BU4CR5XF3/508/index.m3u8
 
     render(): any {
+        appState.preprocessEpgInfo(this.info as any);
 
         let style: CSSProperties = {
             position: "absolute",
@@ -91,7 +92,7 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
             color: "yellow",
             backgroundColor: "rgba(0, 0, 0, 0.75)",
             paddingLeft: 10,
-            overflow:"hidden"
+            overflow: "hidden"
         };
 
         if (appState.infoBoxVisible)
@@ -113,27 +114,32 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
 
             let genreSpan: any = null;
             if (this.info.genreTitle)
-                genreSpan = <span style={{fontSize: 14, color: yearColor}}>{this.info.genreTitle}</span>;
+                genreSpan = <span style={{fontSize: 14, color: yearColor}}>{this.info.genreTitle + ", "}</span>;
 
             let yearSpan: any = null;
             if (this.info.year && this.info.year !== "0")
-                yearSpan = <span style={{fontSize: 14, color: yearColor}}>{", " + this.info.year + " г."}</span>;
+                yearSpan = <span style={{fontSize: 14, color: yearColor}}>{this.info.year + " г., "}</span>;
+
+            let countrySpan: any = null;
+            if (this.info.country && this.info.country !== "")
+                countrySpan = <span style={{fontSize: 13, color: yearColor}}>{this.info.country + ", "}</span>;
 
             let directorSpan: any = null;
             if (this.info.director && this.info.director !== "")
                 directorSpan =
-                    <span style={{fontSize: 14, color: yearColor}}>{", реж.: " + this.info.director}</span>;
+                    <span style={{fontSize: 14, color: yearColor}}>{"реж.: " + this.info.director}</span>;
 
             let actorsSpan: any = null;
             if (this.info.actors && this.info.actors !== "")
                 actorsSpan =
                     <div style={{marginTop: 5, fontSize: 14, color: "#a2a2a2"}}>{"в ролях: " + this.info.actors}</div>;
 
+
             return (
                 <div style={style}>
                     <div style={{textAlign: "left", paddingTop: 5}}>
                         <img style={imgStyle}
-                             src={config.apiUrl.replace("api", "") + "kit/providers/"+this.info.epgProvider+"/images/" + this.info.image}/>
+                             src={config.apiUrl.replace("api", "") + "kit/providers/" + this.info.epgProvider + "/images/" + this.info.image}/>
                     </div>
                     <div style={{padding: 2, overflow: "hidden"}}>
                         <div style={{
@@ -143,6 +149,7 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
                             marginBottom: 5
                         }}>{this.info.title}</div>
                         {genreSpan}
+                        {countrySpan}
                         {yearSpan}
                         {directorSpan}
                         {actorsSpan}

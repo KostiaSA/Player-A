@@ -3,6 +3,7 @@ import * as  ReactDOM from "react-dom";
 import {App, app, setApp} from "./App";
 import {appState} from "./AppState";
 import moment = require("moment");
+import {getRandomString} from "./getRandomString";
 
 moment.locale("ru");
 
@@ -15,6 +16,30 @@ function startTimer(){
         $(".timer-str").text(moment().format("HH:mm:ss,  dddd,  D MMM YYYY"));
     },1000);
 }
+
+
+if (!window.localStorage.getItem("sessionId")) {
+    window.localStorage.setItem("sessionId", getRandomString());
+}
+
+appState.sessionId = window.localStorage.getItem("sessionId")!;
+appState.login = window.localStorage.getItem("login")!;
+appState.password = window.localStorage.getItem("password")!;
+
+
+
+if (!appState.login || !appState.password){
+    appState.login=getRandomString(6).toUpperCase();
+    appState.password=getRandomString(5).toUpperCase();
+    window.localStorage.setItem("login", appState.login);
+    window.localStorage.setItem("password", appState.password);
+}
+
+
+console.log("sessionId", appState.sessionId);
+console.log("login", appState.login);
+console.log("password", appState.password);
+
 
 if (!(window as any).cordova){
     ReactDOM.render(<App ref={(e: any) => setApp(e)}/>, document.body);

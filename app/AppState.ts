@@ -3,7 +3,15 @@ import {App, IAppPage} from "./App";
 import moment = require("moment");
 import {MainEpg} from "./MainEpg";
 import {httpRequest} from "./utils/httpRequest";
-import {GET_ENCRYPT_KEY_CMD, IGetEncryptKeyAns, IGetEncryptKeyReq, ILoginAns, ILoginReq, LOGIN_CMD} from "./api/api";
+import {
+    GET_ENCRYPT_KEY_CMD, GET_PLAYLIST, IEpg, IGetEncryptKeyAns, IGetEncryptKeyReq, IGetPlayListAns, IGetPlayListReq,
+    ILoadCurrentEpgAns,
+    ILoadCurrentEpgReq,
+    ILoginAns, ILoginReq,
+    IRegisterAns,
+    IRegisterReq, LOAD_CURRENT_EPG,
+    LOGIN_CMD, REGISTER_CMD
+} from "./api/api";
 import {InfoBox} from "./InfoBox";
 import {MainEpgPopup} from "./MainEpgPopup";
 import {ArchEpg} from "./ArchEpg";
@@ -36,10 +44,12 @@ export type GuiState =
     | "pauser";
 
 export class AppState {
-    loginOk: boolean;
+    emptyPlayList: boolean = true;
+    @observable starting: boolean = true;
+    @observable loginOk: boolean = false;
     @observable sessionId: string;
-    @observable login: string = "212850";
-    @observable password: string = "31025";
+    @observable login: string;// = "212850";
+    @observable password: string;// = "31025";
     encryptKey: string;
 
 
@@ -102,12 +112,40 @@ export class AppState {
 
                     return httpRequest<ILoginReq, ILoginAns>(loginReq)
                         .then((ans: any) => {
-                            appState.loginOk = true;
-                            window.localStorage.setItem("login", appState.login);
-                            window.localStorage.setItem("password", appState.password);
+
+                            this.getPlaylistOk().then((playList: boolean) => {
+                                if (playList) {
+                                    appState.starting = false;
+                                    appState.loginOk = true;
+                                    appState.emptyPlayList = false;
+                                    appState.showMainEpg(true);
+                                    console.log("loginOk");
+                                }
+                                else {
+                                    appState.starting = false;
+                                    appState.loginOk = false;
+                                    appState.emptyPlayList = true;
+                                    console.log("loginOk, плейлист пустой");
+
+                                }
+                            });
+
+                            //window.localStorage.setItem("login", appState.login);
+                            //window.localStorage.setItem("password", appState.password);
                         })
                         .catch((err: any) => {
-                            alert(err);
+                            appState.loginOk = false;
+                            appState.app.forceUpdate();
+                            if (err === "Неверный логин или пароль") {  // регистрируемся
+
+                                let regReq: IRegisterReq = {
+                                    cmd: REGISTER_CMD,
+                                    login: appState.login,
+                                    password: appState.password,
+                                };
+                                httpRequest<IRegisterReq, IRegisterAns>(regReq);
+                            }
+                            console.log("no login", err);
                         });
 
                 })
@@ -115,6 +153,25 @@ export class AppState {
                     alert(err);
                 });
         }
+
+    }
+
+    async getPlaylistOk(): Promise<boolean> {
+
+        let req: ILoadCurrentEpgReq = {
+            cmd: LOAD_CURRENT_EPG,
+            login: appState.login,
+            password: appState.password,
+            category: "ВСЕ"
+        };
+
+        return httpRequest<ILoadCurrentEpgReq, ILoadCurrentEpgAns>(req)
+            .then((ans: ILoadCurrentEpgAns) => {
+                return ans.epg.length > 0;
+            })
+            .catch((err: any) => {
+                return false;
+            });
 
     }
 
@@ -323,6 +380,23 @@ export class AppState {
             height: rewinderHeight,
             width: rewinderWidth,
         }
+    }
+
+    preprocessEpgInfo(epg:IEpg){
+
+        if (epg && !epg.country) {
+
+            let desc = epg.desc;
+            let country = "";
+            if (desc.startsWith("Произведено:")) {
+                let words = desc.replace(".", ":").split(":");
+                country = words[1];
+                desc = words[2] + " " + words[3] + words[4];
+            }
+            epg.desc=desc;
+            epg.country=country;
+        }
+
     }
 }
 
