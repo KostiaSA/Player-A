@@ -103,8 +103,8 @@ export class App extends React.Component<any, any> {
             };
             appState.channelPlayStates[appState.playedChannel] = chState;
             if (appState.nativePlayer) {
-                appState.nativePlayer.src = "",//http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8";
-                    appState.nativePlayer.play();
+                appState.nativePlayer.src = "";//http://kostiasa.ottv.biz/iptv/LS9WCK6KT28XLT/106/index.m3u8";
+                appState.nativePlayer.play();
             }
         }, 1000);
 
@@ -117,7 +117,10 @@ export class App extends React.Component<any, any> {
         document.addEventListener("keydown", (e: any) => {
             console.log("global keydown", e.keyCode);
             if (e.keyCode === 27) {
-                if (appState.mainEpg)
+                if (appState.getGuiState() === "video") { //вверх вниз
+                    appState.showMainEpg(true);
+                }
+                else if (appState.mainEpg)
                     appState.mainEpg.backButtonPressed();
                 if (appState.mainEpgPopup)
                     appState.mainEpgPopup.backButtonPressed();
@@ -156,6 +159,8 @@ export class App extends React.Component<any, any> {
                     appState.showRewinder();
                     appState.rewinderSecs = -15;
                     appState.rewinderLastUpdateTime = new Date();
+                    appState.rewinderSecsToZero = false;
+
                 }
                 else if (appState.getGuiState() === "rewinder") {
                     if (appState.rewinderSecs < 600)
@@ -163,6 +168,7 @@ export class App extends React.Component<any, any> {
                     else
                         appState.rewinderSecs -= 60;
                     appState.rewinderLastUpdateTime = new Date();
+                    appState.rewinderSecsToZero = false;
                 }
             }
 
@@ -178,6 +184,17 @@ export class App extends React.Component<any, any> {
                 if (appState.getGuiState() == "video") {
                     appState.showRewinder();
                     appState.rewinderSecs = 15;
+
+                    let currDate = appState.getActivePlayerTime();
+                    let rewinderDateMs = currDate.getTime() + appState.rewinderSecs * 1000;
+                    let nowDateMs = new Date().getTime();
+                    if (rewinderDateMs > nowDateMs) {
+                        appState.rewinderSecs = Math.round((nowDateMs - appState.getActivePlayerTime().getTime()) / 1000);
+                        appState.rewinderSecsToZero = true;
+                    }
+                    else
+                        appState.rewinderSecsToZero = false;
+
                     appState.rewinderLastUpdateTime = new Date();
                 }
                 else if (appState.getGuiState() === "rewinder") {
@@ -185,6 +202,18 @@ export class App extends React.Component<any, any> {
                         appState.rewinderSecs += 15;
                     else
                         appState.rewinderSecs += 60;
+
+                    let currDate = appState.getActivePlayerTime();
+                    let rewinderDateMs = currDate.getTime() + appState.rewinderSecs * 1000;
+                    let nowDateMs = new Date().getTime();
+                    if (rewinderDateMs > nowDateMs) {
+                        appState.rewinderSecs = Math.round((nowDateMs - appState.getActivePlayerTime().getTime()) / 1000);
+                        appState.rewinderSecsToZero = true;
+                    }
+                    else
+                        appState.rewinderSecsToZero = false;
+
+
                     appState.rewinderLastUpdateTime = new Date();
                 }
             }
@@ -219,18 +248,23 @@ export class App extends React.Component<any, any> {
         }, false);
 
         document.addEventListener("backbutton", () => {
-            if (appState.mainEpg)
-                appState.mainEpg.backButtonPressed();
-            if (appState.mainEpgPopup)
-                appState.mainEpgPopup.backButtonPressed();
-            if (appState.archEpg)
-                appState.archEpg.backButtonPressed();
-            if (appState.archEpgPopup)
-                appState.archEpgPopup.backButtonPressed();
-            if (appState.rewinder)
-                appState.rewinder.backButtonPressed();
-            if (appState.pauser)
-                appState.pauser.backButtonPressed();
+            if (appState.getGuiState() === "video") { //вверх вниз
+                appState.showMainEpg(true);
+            }
+            else {
+                if (appState.mainEpg)
+                    appState.mainEpg.backButtonPressed();
+                if (appState.mainEpgPopup)
+                    appState.mainEpgPopup.backButtonPressed();
+                if (appState.archEpg)
+                    appState.archEpg.backButtonPressed();
+                if (appState.archEpgPopup)
+                    appState.archEpgPopup.backButtonPressed();
+                if (appState.rewinder)
+                    appState.rewinder.backButtonPressed();
+                if (appState.pauser)
+                    appState.pauser.backButtonPressed();
+            }
         }, false);
 
 
@@ -250,11 +284,11 @@ export class App extends React.Component<any, any> {
                 }}>
                     <MainVideo/>
                     <MainEpg/>
-                    <MainEpgPopup/>
                     <ArchEpg/>
-                    <ArchEpgPopup/>
                     <InfoBox/>
                     <Footer/>
+                    <MainEpgPopup/>
+                    <ArchEpgPopup/>
                     <Rewinder/>
                     <Pauser/>
                     <WelcomePage/>
@@ -267,14 +301,24 @@ export class App extends React.Component<any, any> {
                     {/*opacity: 0.4,*/}
                     {/*backgroundColor:"white"*/}
                     {/*}}></div>*/}
-                    <img style={{
-                        display: appState.waitCoverVisible ? "block" : "none",
-                        position: "absolute",
-                        left: 960 / 2,
-                        top: 540 / 2 - 20,
-                    }}
-                         src="img/ajax-loader.gif"
-                    ></img>
+
+                    <i className="fa fa-spinner fa-3x faa-spin animated"
+                       style={{
+                           color: "darkturquoise",
+                           display: appState.waitCoverVisible ? "block" : "none",
+                           position: "absolute",
+                           left: screen.width / 2,
+                           top: screen.height / 2 - 20,
+                       }}
+                    ></i>
+                    {/*<img style={{*/}
+                    {/*display: appState.waitCoverVisible ? "block" : "none",*/}
+                    {/*position: "absolute",*/}
+                    {/*left: 960 / 2,*/}
+                    {/*top: 540 / 2 - 20,*/}
+                    {/*}}*/}
+                    {/*src="img/ajax-loader.gif"*/}
+                    {/*></img>*/}
 
                 </div>
             );
@@ -284,22 +328,31 @@ export class App extends React.Component<any, any> {
                 <div style={{position: "relative", height: "100%"}}>
                     <MainVideo/>
                     <MainEpg/>
-                    <MainEpgPopup/>
                     <ArchEpg/>
-                    <ArchEpgPopup/>
                     <InfoBox/>
                     <Footer/>
+                    <MainEpgPopup/>
+                    <ArchEpgPopup/>
                     <Rewinder/>
                     <Pauser/>
                     <WelcomePage/>
-                    <img style={{
-                        display: appState.waitCoverVisible ? "block" : "none",
-                        position: "absolute",
-                        left: screen.width / 2,
-                        top: screen.height / 2 - 20,
-                    }}
-                         src="img/ajax-loader.gif"
-                    ></img>
+                    <i className="fa fa-spinner fa-3x faa-spin animated"
+                       style={{
+                           color: "darkturquoise",
+                           display: appState.waitCoverVisible ? "block" : "none",
+                           position: "absolute",
+                           left: screen.width / 2,
+                           top: screen.height / 2 - 20,
+                       }}
+                    ></i>
+                    {/*<img style={{*/}
+                    {/*display: appState.waitCoverVisible ? "block" : "none",*/}
+                    {/*position: "absolute",*/}
+                    {/*left: screen.width / 2,*/}
+                    {/*top: screen.height / 2 - 20,*/}
+                    {/*}}*/}
+                    src="img/ajax-loader.gif"
+                    {/*></img>*/}
 
 
                     {/*<button style={{*/}

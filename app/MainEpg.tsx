@@ -176,9 +176,11 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
             console.log("mainEpg play -1");
             if (appState.nativePlayer) {
                 console.log("mainEpg play 0");
-                appState.nativePlayer.src = this.focusedEpg!.channelUrl;
+                appState.nativePlayer.src = appState.prepareUrl(this.focusedEpg!.channelUrl);
                 appState.nativePlayer.play();
-                console.log("mainEpg play", this.focusedEpg!.channelUrl)
+                console.log("mainEpg play", appState.nativePlayer.src);
+                //alert(appState.nativePlayer.src);
+
             }
             appState.showVideo();
         }
@@ -343,6 +345,10 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
 
         let headerHeight = 25;
 
+        let categoryStr=this.category.toLocaleUpperCase();
+        if (categoryStr==="ПРОЧИЕ")
+            categoryStr="ЭФИРНЫЕ";
+
         return (
             <div
                 onKeyPress={(e: KeyboardEvent<any>) => {
@@ -361,7 +367,7 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                         color: "white",
                         padding: 3,
                         float: "right"
-                    }}>каналы: {this.category.toLocaleUpperCase()}</span>
+                    }}>каналы: {categoryStr}</span>
 
                     {/*<button onClick={() => {*/}
                     {/*console.log("пауза");*/}
@@ -424,6 +430,13 @@ export class MainEpg extends React.Component<IMainEpgProps, any> {
                             if (this.focusedEpg) {
                                 this.focusedChannelId = this.focusedEpg.channelId;
                                 appState.infoBox.loadInfo(this.focusedEpg.channelId, this.focusedEpg.time);
+
+                                // http://rge8676.ottclub.ru/iptv/4YXH87LHVHCUA9/515/index.m3u8
+                                if (!appState.server) {
+                                    //let words=this.focusedEpg.channelUrl.replace("http://","").split("/")[0].split(".");
+                                    //appState.server=words.slice(-2).join(".");
+                                    appState.server = appState.getServerFromUrl(this.focusedEpg.channelUrl);
+                                }
                             }
                             // else
                             //     alert("focusedEpg?");

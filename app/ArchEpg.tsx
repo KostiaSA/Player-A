@@ -179,7 +179,7 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                 appState.channelPlayStates[appState.playedChannel] = chState;
 
                 if (appState.nativePlayer) {
-                    appState.nativePlayer.src = url;
+                    appState.nativePlayer.src = appState.prepareUrl(url);
                     appState.nativePlayer.play();
                 }
 
@@ -213,7 +213,7 @@ export class ArchEpg extends React.Component<IMainEpgProps, any> {
                 appState.channelPlayStates[appState.playedChannel] = chState;
 
                 if (appState.nativePlayer) {
-                    appState.nativePlayer.src = appState.mainEpg.focusedEpg!.channelUrl;
+                    appState.nativePlayer.src = appState.prepareUrl(appState.mainEpg.focusedEpg!.channelUrl);
                     appState.nativePlayer.play();
                 }
 

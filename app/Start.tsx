@@ -25,6 +25,7 @@ if (!window.localStorage.getItem("sessionId")) {
 appState.sessionId = window.localStorage.getItem("sessionId")!;
 appState.login = window.localStorage.getItem("login")!;
 appState.password = window.localStorage.getItem("password")!;
+appState.server = window.localStorage.getItem("server")!;
 
 
 

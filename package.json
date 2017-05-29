@@ -1,7 +1,7 @@
 {
-    "name": "io.cordova.hellocordova",
+    "name": "BuhtaPlayer",
     "version": "1.0.0",
-    "displayName": "Edem Player",
+    "displayName": "Buhta Player",
     "cordova": {
         "platforms": [
             "android",

@@ -76,7 +76,7 @@ export class Pauser extends React.Component<IPauserProps, any> {
                 chState.lastCurrentTime = new Date();
 
                 if (appState.nativePlayer) {
-                    appState.nativePlayer.src = url;
+                    appState.nativePlayer.src = appState.prepareUrl(url);
                     appState.nativePlayer.play();
                 }
             }

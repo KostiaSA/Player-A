@@ -50,6 +50,7 @@ export class AppState {
     @observable sessionId: string;
     @observable login: string;// = "212850";
     @observable password: string;// = "31025";
+    @observable server: string;
     encryptKey: string;
 
 
@@ -82,6 +83,7 @@ export class AppState {
 
     @observable rewinderVisible: boolean = false;
     @observable rewinderSecs: number = 0;
+    @observable rewinderSecsToZero: boolean = false;
     @observable rewinderLastUpdateTime: Date = new Date();
 
     @observable pauserVisible: boolean = false;
@@ -382,7 +384,7 @@ export class AppState {
         }
     }
 
-    preprocessEpgInfo(epg:IEpg){
+    preprocessEpgInfo(epg: IEpg) {
 
         if (epg && !epg.country) {
 
@@ -391,13 +393,61 @@ export class AppState {
             if (desc.startsWith("Произведено:")) {
                 let words = desc.replace(".", ":").split(":");
                 country = words[1];
-                desc = words[2] + " " + words[3] + words[4];
+                desc = words[2] + " " + (words[3] || "") + (words[4] || "");
             }
-            epg.desc=desc;
-            epg.country=country;
+            epg.desc = desc;
+            epg.country = country;
+        }
+    }
+
+
+    // http://rge8676.ottclub.ru/iptv/4YXH87LHVHCUA9/515/index.m3u8
+    getServerFromUrl(url: string): string {
+        let words = url.replace("http://", "").split("/")[0].split(".");
+        return words.slice(-2).join(".");
+    }
+
+    // http://rge8676.ottclub.ru/iptv/4YXH87LHVHCUA9/515/index.m3u8
+    prepareUrl(url: string): string {
+        if (appState.server) {
+            let oldServer = this.getServerFromUrl(url);
+            window.localStorage.setItem("server", appState.server);
+            return url.replace(oldServer, appState.server);
+
+        }
+        else
+            return url;
+    }
+
+    restartVideo() {
+        let chState = appState.channelPlayStates[appState.playedChannel];
+
+        let toTime = new Date(appState.getActivePlayerTime().getTime());
+        let utc = moment(toTime).toDate().getTime().toString().substr(0, 10);
+
+        let lutc = (new Date()).getTime().toString().substr(0, 10);
+        let url = chState.epgUrl + "?utc=" + utc + "&lutc=" + lutc;
+
+        if (toTime.getTime()>new Date().getTime()-30000)  // если переход в будущее
+            url = chState.epgUrl;
+
+
+        chState.isArchive = true;
+        chState.startTime = toTime;
+        chState.currentTimeSec = 0;
+        chState.lastCurrentTime = new Date();
+
+        if (appState.nativePlayer) {
+            appState.nativePlayer.src = appState.prepareUrl(url);
+            appState.nativePlayer.play();
         }
 
+        window.localStorage.setItem("server", appState.server);
+
+        appState.showVideo();
+
     }
+
 }
 
 

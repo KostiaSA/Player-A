@@ -137,6 +137,9 @@ export class InfoBox extends React.Component<IInfoBoxProps, any> {
 
             return (
                 <div style={style}>
+                    <div style={{height: 25, textAlign:"right"}}>
+                        <span style={{fontSize: 16, color: "yellowgreen", padding: 3}}>сервер: {appState.server} </span>
+                    </div>
                     <div style={{textAlign: "left", paddingTop: 5}}>
                         <img style={imgStyle}
                              src={config.apiUrl.replace("api", "") + "kit/providers/" + this.info.epgProvider + "/images/" + this.info.image}/>

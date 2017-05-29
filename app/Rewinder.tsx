@@ -39,7 +39,7 @@ export class Rewinder extends React.Component<IRewinderProps, any> {
         setInterval(() => {
             if (appState.getGuiState() === "rewinder") {
                 if ((new Date()).getTime() - appState.rewinderLastUpdateTime.getTime() > 1000) {
-                    this.backButtonPressed();
+                    this.enterKeyPressed();
                 }
             }
         }, 200);
@@ -63,13 +63,16 @@ export class Rewinder extends React.Component<IRewinderProps, any> {
             let lutc = (new Date()).getTime().toString().substr(0, 10);
             let url = chState.epgUrl + "?utc=" + utc + "&lutc=" + lutc;
 
+            if (toTime.getTime()>new Date().getTime()-30000)  // если переход в будущее
+                url = chState.epgUrl;
+
             chState.isArchive = true;
             chState.startTime = toTime;
             chState.currentTimeSec = 0;
             chState.lastCurrentTime = new Date();
 
             if (appState.nativePlayer) {
-                appState.nativePlayer.src = url;
+                appState.nativePlayer.src = appState.prepareUrl(url);
                 appState.nativePlayer.play();
             }
 
@@ -153,9 +156,14 @@ export class Rewinder extends React.Component<IRewinderProps, any> {
             let dd = new Date(d.getTime() + Math.abs(appState.rewinderSecs) * 1000);
             secStr = moment(dd).format("HH:mm:ss");
         }
-
+        if (appState.rewinderSecsToZero) {
+            secStr = "сейчас";
+            sign="";
+        }
 
         let currDate = appState.getActivePlayerTime();
+
+        let timeStr = moment(new Date(currDate.getTime() + appState.rewinderSecs * 1000)).format("dd HH:mm:ss");
 
         return (
             <div style={style}>
@@ -164,7 +172,7 @@ export class Rewinder extends React.Component<IRewinderProps, any> {
                     style={{
                         marginTop: 10,
                         color: "#c7c7c7"
-                    }}>{moment(new Date(currDate.getTime() + appState.rewinderSecs * 1000)).format("dd HH:mm:ss")}</div>
+                    }}>{timeStr}</div>
             </div>
         );
     }
