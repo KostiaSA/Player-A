@@ -26,9 +26,9 @@ export class ArchEpgPopup extends React.Component<IArchEpgPopupProps, any> {
     savedParentFocus: Element;
 
     openPopup() {
-        this.savedParentFocus = document.activeElement;
-        appState.archEpgPopupVisible = true;
-        $(".main-epg-popup button").first().focus();
+        // this.savedParentFocus = document.activeElement;
+        // appState.archEpgPopupVisible = true;
+        // $(".main-epg-popup button").first().focus();
     }
 
     closePopup() {
