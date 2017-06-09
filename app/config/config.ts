@@ -5,7 +5,7 @@ export interface IConfig {
 
 let developDir: IConfig = {
     appName: "EdemTV Player",
-    apiUrl: "http://192.168.0.14:3001/api",
+    apiUrl: "http://player.buhta.ru/api",
 };
 
 let cloudDir: IConfig = {
